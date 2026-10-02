@@ -1,0 +1,929 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Classroom Simulator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Unbounded:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#2b3144; --head:#363d55; --tile:#393f5a; --tile-b:#424a66; --box:#2e3448;
+  --lime:#cdf24a; --blue:#5b8cff; --lbl:#1d2131; --red:#ff4d5e; --txt:#e8eaf1; --muted:#a3a9bd;
+  --btn:#3c4360; --btn-on:#4b5377; --kl:#2a2e3d; --kl-head:#383d55;
+  --coach:#ffd34d;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--txt);font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;overflow:hidden}
+button{font-family:inherit;color:inherit;border:0;background:none;cursor:pointer}
+svg{display:block}
+
+/* ---------- Classroom header ---------- */
+.cr-head{height:56px;background:var(--head);display:flex;align-items:center;padding:0 18px;gap:12px;position:relative}
+.cr-head .back{width:34px;height:34px;border-radius:10px;display:grid;place-items:center}
+.cr-head .back:hover{background:#4a5274}
+.cr-head b{font-size:15px;font-weight:700}
+.cr-head .muted{color:var(--muted);font-size:13px}
+.leave{margin-left:auto;color:var(--red);font-size:13px;display:flex;align-items:center;gap:6px}
+.hud{position:absolute;left:50%;transform:translateX(-50%);display:flex;gap:8px;align-items:center}
+.hud-chip{background:#262b3c;border:1px solid #545d80;border-radius:999px;padding:5px 12px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px}
+.hud-chip.mode{background:var(--coach);color:#2a2410;border-color:var(--coach)}
+.heart{font-size:14px;transition:.3s}
+.heart.lost{filter:grayscale(1);opacity:.35}
+.heart.breaking{animation:heartBreak .8s ease}
+@keyframes heartBreak{0%{transform:scale(1)}30%{transform:scale(1.6)}60%{transform:scale(.6) rotate(-20deg)}100%{transform:scale(1)}}
+.dia-pop{animation:diaPop .9s ease}
+@keyframes diaPop{0%{transform:scale(1)}40%{transform:scale(1.5)}100%{transform:scale(1)}}
+
+/* ---------- Console ---------- */
+.console{height:calc(100vh - 56px);padding:16px 14px;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:14px}
+.room-box{border:1px solid var(--tile-b);border-radius:14px;padding:4px;background:var(--box);position:relative;min-height:0}
+.room-box.joined{cursor:pointer}
+.room-box.joined:hover{border-color:#6d7799}
+.room-inner{height:100%;border-radius:11px;background:var(--tile);position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.room-box.joined .room-inner{background:var(--box);align-items:flex-start;justify-content:flex-start}
+.tag{position:absolute;top:8px;left:8px;background:var(--lbl);font-size:12px;font-weight:700;padding:4px 10px;border-radius:7px;z-index:2;display:flex;align-items:center;gap:6px}
+.tag .dot{width:7px;height:7px;border-radius:50%;background:var(--lime);box-shadow:0 0 6px var(--lime)}
+.av{width:60px;height:60px;border-radius:50%;background:var(--blue);display:grid;place-items:center;font-size:22px;color:#24305a;font-weight:500}
+.lbl{position:absolute;left:8px;bottom:8px;background:var(--lbl);font-size:12px;padding:5px 10px;border-radius:5px;display:flex;align-items:center;gap:6px;white-space:nowrap;z-index:2}
+.bars{display:flex;align-items:flex-end;gap:1.5px;height:11px}
+.bars i{width:2.5px;background:#3fd16b;border-radius:1px}
+.bars i:nth-child(1){height:4px}.bars i:nth-child(2){height:6px}.bars i:nth-child(3){height:9px}.bars i:nth-child(4){height:11px}
+.minis{display:flex;gap:4px;padding:0}
+.mini{position:relative;border-radius:9px;background:var(--tile);overflow:hidden;display:flex;align-items:center;justify-content:center}
+.mini img{width:100%;height:100%;object-fit:cover}
+.console .mini{width:242px;height:148px}
+.console .mini .av{width:60px;height:60px}
+.console .minis{padding:0}
+.side .mini{width:78px;height:64px}
+.side .mini .av{width:30px;height:30px;font-size:13px}
+.side .mini .lbl{font-size:10px;padding:2px 5px;left:3px;bottom:3px;max-width:70px;overflow:hidden}
+.side .room-box.joined .room-inner{padding:2px}
+.side .room-box.joined .tag{top:6px;left:6px}
+
+/* ---------- Room layout ---------- */
+.room-layout{height:calc(100vh - 56px);display:flex;gap:14px;padding:16px 14px}
+.side{width:262px;flex:0 0 262px;display:flex;flex-direction:column;gap:14px}
+.side .room-box{flex:1}
+.side .av{width:60px;height:60px}
+.frame{flex:1;min-width:0;border:2px solid var(--lime);border-radius:14px;padding:6px;display:flex;flex-direction:column;position:relative;background:var(--bg)}
+.frame-tag{top:12px;left:12px}
+.stage{flex:1;min-height:0;display:flex;flex-direction:column;gap:4px}
+.vt{position:relative;background:var(--tile);border-radius:10px;overflow:hidden;display:flex;align-items:center;justify-content:center;flex:1;min-height:0;transition:box-shadow .2s}
+.vt.student img{height:100%;width:auto;max-width:100%;object-fit:cover;aspect-ratio:16/9}
+.vt .dots{position:absolute;top:8px;right:8px;width:28px;height:26px;border-radius:6px;background:var(--lbl);font-size:14px;line-height:1}
+.vt.speaking{box-shadow:inset 0 0 0 3px #3fd16b}
+.follow-badge{position:absolute;top:8px;left:8px;background:#fff;color:#1d2131;font-size:11px;font-weight:600;border-radius:999px;padding:4px 10px;display:flex;gap:5px;align-items:center;z-index:3;animation:fadeIn .4s}
+.stage.tasks{flex-direction:row;gap:14px}
+.kl{flex:1;min-width:0;background:var(--kl);border-radius:10px;display:flex;flex-direction:column;overflow:hidden}
+.kl-head{height:64px;background:var(--kl-head);display:flex;align-items:center;padding:16px 16px 0;flex:0 0 auto}
+.kl-logo{font-family:Unbounded,Inter,sans-serif;font-weight:600;font-size:20px;letter-spacing:-.02em}
+.kl-right{margin-left:auto;display:flex;align-items:center;gap:22px;font-size:14px}
+.theme{display:flex;align-items:center;gap:6px;color:#7f87a8}
+.theme .sw{width:58px;height:30px;border-radius:999px;background:#2a2f40;position:relative}
+.theme .sw::after{content:"";position:absolute;width:24px;height:24px;border-radius:50%;background:#7c84b0;top:3px;left:31px}
+.lang{border:1px solid #9aa0b5;border-radius:8px;padding:9px 14px;font-size:13px;font-weight:600}
+.kl-user{display:flex;align-items:center;gap:10px}
+.kl-av{width:32px;height:32px;border-radius:50%;background:radial-gradient(circle at 50% 40%,#c9d4ff,#6c79c9);border:2px solid #fff}
+.kl-body{flex:1;min-height:0;display:flex}
+.kl-rail{width:40px;flex:0 0 40px;border-right:1px solid #3d4258;padding-top:10px;display:flex;justify-content:center}
+.atom{width:28px;height:28px;border-radius:6px;background:var(--blue);display:grid;place-items:center}
+.kl-main{flex:1;min-width:0;display:flex;flex-direction:column}
+.kl-title{padding:16px 24px 12px;font-size:15px;font-weight:600}
+.task-scroll{flex:1;min-height:0;overflow-y:auto;padding:0 24px;scroll-behavior:smooth}
+.task-scroll::-webkit-scrollbar{width:12px}
+.task-scroll::-webkit-scrollbar-track{background:#fff;border-radius:2px}
+.task-scroll::-webkit-scrollbar-thumb{background:#c1c1c1;border-radius:6px;border:3px solid #fff}
+.right-col{width:228px;flex:0 0 228px;border:1px solid #3d4460;border-radius:12px;display:flex;flex-direction:column;justify-content:center;gap:4px;padding:4px}
+.right-col .vt{flex:0 0 124px}
+.right-col .vt .av{width:58px;height:58px}
+.right-col .vt.student img{width:100%;height:100%}
+.right-col .lbl{font-size:12px}
+
+/* ---------- Toolbar ---------- */
+.tb{height:58px;flex:0 0 58px;display:flex;align-items:center;gap:8px;padding:8px 6px 2px;position:relative}
+.tb-l,.tb-c{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.tb-btn{white-space:nowrap}
+.tb-c{margin:0 auto}
+.tb-btn,.tb-ico,.ib,.lead,.nav button{height:40px;border-radius:10px;background:var(--btn);display:flex;align-items:center;gap:8px;font-size:13px;position:relative;transition:background .15s}
+.tb-btn{padding:0 14px}
+.tb-btn.on{background:var(--btn-on);box-shadow:inset 0 0 0 1px #8a93b8}
+.tb-group{display:flex;border-radius:10px;background:var(--btn)}
+.tb-group .tb-btn,.tb-group .tb-ico{background:transparent}
+.tb-ico{width:42px;justify-content:center}
+.tb-group:hover .tb-btn{background:var(--blue);border-radius:10px 0 0 10px}
+.tb-group.on{background:var(--btn-on)}
+.tb-ico:hover{background:#525b82 !important}
+.nav{display:flex;border-radius:10px;background:var(--btn-on);overflow:hidden}
+.nav button{width:46px;justify-content:center;background:transparent;border-radius:0}
+.nav button:hover{background:#5d6790}
+.lead{padding:0 12px 0 14px;cursor:pointer;user-select:none;white-space:nowrap}
+.lead .sw{width:34px;height:20px;border-radius:999px;border:2px solid #fff;position:relative;transition:.25s;background:transparent}
+.lead .sw::after{content:"";position:absolute;width:12px;height:12px;border-radius:50%;background:#fff;top:2px;left:2px;transition:.25s}
+.lead.on .sw{background:var(--blue);border-color:var(--blue)}
+.lead.on .sw::after{left:16px}
+.lead.flash{animation:leadFlash 1s ease}
+@keyframes leadFlash{0%,100%{box-shadow:none}40%{box-shadow:0 0 0 4px rgba(91,140,255,.6)}}
+.ib{width:40px;justify-content:center}
+.ib:hover{background:#4a5274}
+.pair{display:flex;border-radius:10px;background:var(--btn)}
+.pair .ib{background:transparent}
+.pair .ib+.ib{width:36px;border-left:1px solid #2f3550;border-radius:0 10px 10px 0}
+.ib.cnt{width:auto;padding:0 14px;gap:12px}
+.end{margin-left:auto;height:40px;border-radius:10px;background:var(--btn);color:var(--red);padding:0 14px;display:flex;align-items:center;gap:8px;font-size:13px}
+[data-tip]:hover::after{content:attr(data-tip);position:absolute;top:calc(100% + 4px);left:50%;transform:translateX(-50%);background:#fff;color:#222;font-size:12px;padding:4px 8px;white-space:nowrap;z-index:50;border-radius:2px;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+
+/* ---------- Activity dropdown ---------- */
+.dd{position:absolute;left:104px;bottom:62px;width:450px;height:400px;background:#363d55;border:1px solid #9aa0b5;border-radius:8px;z-index:20;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.dd-scroll{height:100%;overflow-y:auto;padding:4px}
+.dd-item{padding:11px 16px;font-size:14px;border-radius:6px;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.dd-item:hover{background:#454d6c}
+.dd-item.sel{background:#5a6286}
+
+/* ---------- Activity content (kodland dark) ---------- */
+.task{max-width:720px;margin:0 auto;padding:6px 0 60px;font-size:15px;line-height:1.65;color:#e4e6ee}
+.task h1{font-family:Unbounded,Inter,sans-serif;font-weight:700;font-size:33px;line-height:1.2;margin:22px 0 16px}
+.task h2{font-family:Unbounded,Inter,sans-serif;font-weight:700;font-size:23px;margin:26px 0 10px}
+.task h3{font-family:Unbounded,Inter,sans-serif;font-weight:700;font-size:19px;margin:20px 0 8px}
+.task p{margin:8px 0}
+.task ul,.task ol{padding-left:22px;margin:6px 0}
+.task li{margin:6px 0}
+.task blockquote{border-left:3px solid #8b90a4;margin:16px 0;padding:2px 0 2px 16px;color:#a9aec1}
+.banner{width:100%;display:block;border-radius:14px;margin:14px 0}
+.media{display:flex;gap:22px;align-items:flex-start;margin:16px 0}
+.media-img{flex:0 0 44%;background:#fde9e6;padding:10px;border-radius:16px}
+.media.narrow .media-img{flex-basis:25%}
+.media-img img{width:100%;display:block;border-radius:10px}
+.media-c{flex:1;min-width:0}
+.media-c h3{margin-top:4px}
+.spoiler{border:1px solid #c5c8d3;border-radius:12px;margin:10px 0;overflow:hidden}
+.spoiler summary{list-style:none;padding:12px 16px;font-weight:600;cursor:pointer;display:flex;gap:12px;align-items:center}
+.spoiler summary::-webkit-details-marker{display:none}
+.spoiler summary::before{content:"▸";font-size:10px;color:#a9aec1;transition:.2s}
+.spoiler[open] summary::before{transform:rotate(90deg)}
+.spoiler[open] summary{border-bottom:1px solid #c5c8d3}
+.sp-body{padding:6px 20px 10px}
+.note{background:#353c54;border-left:3px solid var(--blue);border-radius:12px;padding:14px 22px;margin:16px 0}
+.note-t{color:#6f97ff;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.03em}
+.tnotes{border:1px dashed #a97a26;background:#32333e;border-radius:12px;padding:16px 18px 10px;margin:22px 0}
+.tn-label{color:#c98b1e;font-size:13px;margin-bottom:4px}
+.tnotes h1{font-size:30px}
+.tnotes video{width:100%;border-radius:10px;margin:10px 0;background:#000}
+.quiz label{display:flex;gap:12px;align-items:center;border:1px solid #c5c8d3;border-radius:10px;padding:11px 16px;margin:8px 0;cursor:pointer}
+.quiz input{width:18px;height:18px;accent-color:#ec5fa6}
+.submit{display:block;margin:12px auto;background:#ec5fa6;color:#fff;border:3px solid #fff;border-radius:10px;padding:8px 16px;font-weight:600}
+.sim-note{color:#a9aec1;font-style:italic;border:1px dashed #5c6380;border-radius:10px;padding:12px 16px}
+.center-img{display:block;max-width:470px;width:100%;margin:12px auto;border-radius:14px}
+
+/* ---------- Simulator layers (guide, decisions, modals) ---------- */
+#spot{position:fixed;border-radius:12px;pointer-events:none;z-index:900;box-shadow:0 0 0 9999px rgba(10,12,22,.55);display:none}
+#spot::after{content:"";position:absolute;inset:-4px;border-radius:14px;border:3px solid var(--coach);animation:pulse 1.4s infinite}
+@keyframes pulse{0%{opacity:1;transform:scale(1)}70%{opacity:0;transform:scale(1.06)}100%{opacity:0}}
+#coach{position:fixed;z-index:950;width:350px;background:#fff;color:#1f2433;border-radius:16px;padding:18px 20px 16px;box-shadow:0 18px 50px rgba(0,0,0,.45);display:none;transition:left .3s,top .3s;border-top:6px solid var(--coach)}
+#coach .c-step{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#a07a00}
+#coach h4{margin:6px 0 8px;font-size:17px}
+#coach p{margin:0;font-size:14px;line-height:1.55;color:#3a4052}
+#coach .c-foot{display:flex;justify-content:space-between;align-items:center;margin-top:14px}
+#coach .c-hint{font-size:12px;color:#8a7020;font-weight:600}
+#coach.shake{animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-6px)}50%{transform:translateX(6px)}75%{transform:translateX(-3px)}}
+.btn-p{background:#1f2433;color:#fff;border-radius:10px;padding:10px 18px;font-weight:600;font-size:14px}
+.btn-p:hover{background:#3a4260}
+.btn-y{background:var(--coach);color:#2a2410;border-radius:12px;padding:13px 26px;font-weight:700;font-size:15px}
+.btn-y:hover{filter:brightness(1.05)}
+
+#qp{position:fixed;z-index:800;width:560px;background:#fff;color:#1f2433;border-radius:18px;padding:20px 22px;box-shadow:0 20px 60px rgba(0,0,0,.5);display:none;border-top:6px solid var(--coach);animation:fadeIn .35s}
+#qp.busy{opacity:.55;pointer-events:none}
+.qp-head{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#a07a00}
+.qp-q{font-size:15.5px;line-height:1.55;margin:10px 0 14px;font-weight:500}
+.qp-opt{width:100%;text-align:left;display:flex;gap:12px;align-items:center;border:2px solid #e2e5ee;border-radius:12px;padding:12px 14px;margin:8px 0;font-size:14.5px;color:#1f2433;background:#fafbfd;transition:.15s}
+.qp-opt:hover{border-color:var(--blue);background:#f1f5ff}
+.qp-opt .k{flex:0 0 28px;height:28px;border-radius:8px;background:#1f2433;color:#fff;display:grid;place-items:center;font-weight:700;font-size:13px}
+.qp-opt.tried{opacity:.45;pointer-events:none;text-decoration:line-through}
+
+#caption{position:fixed;z-index:850;left:50%;bottom:92px;transform:translateX(-50%);background:rgba(20,23,35,.92);border:1px solid #545d80;color:#fff;border-radius:12px;padding:12px 18px;font-size:15px;display:none;max-width:640px;align-items:center;gap:10px;animation:fadeIn .25s}
+#caption .who{font-weight:700;color:var(--coach)}
+.eq{display:flex;gap:2px;align-items:flex-end;height:14px}
+.eq i{width:3px;background:#3fd16b;animation:eq .6s infinite ease-in-out}
+.eq i:nth-child(2){animation-delay:.15s}.eq i:nth-child(3){animation-delay:.3s}.eq i:nth-child(4){animation-delay:.45s}
+@keyframes eq{0%,100%{height:3px}50%{height:14px}}
+
+#modal{position:fixed;inset:0;z-index:1000;background:rgba(10,12,22,.7);display:none;align-items:center;justify-content:center;backdrop-filter:blur(3px)}
+.m-card{width:min(560px,92vw);background:#fff;color:#1f2433;border-radius:22px;padding:30px 32px 26px;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.5);animation:popIn .35s ease}
+@keyframes popIn{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.m-icon{font-size:52px;line-height:1}
+.m-card h2{margin:12px 0 8px;font-size:24px}
+.m-card p{color:#454b5e;font-size:15px;line-height:1.6;margin:8px 0}
+.m-card .m-lives{font-size:24px;margin:12px 0 4px;letter-spacing:4px}
+.m-card .btns{margin-top:20px;display:flex;gap:10px;justify-content:center}
+.m-card.bad{border-top:8px solid var(--red)}
+.m-card.good{border-top:8px solid #2fbf68}
+.m-card.info{border-top:8px solid var(--coach)}
+
+#intro{position:fixed;inset:0;z-index:1100;background:radial-gradient(1200px 600px at 20% 0%,#3b4570 0%,#232839 60%);display:none;overflow:auto}
+.intro-wrap{max-width:900px;margin:0 auto;padding:56px 24px 40px}
+.intro-kicker{display:inline-block;background:var(--coach);color:#2a2410;font-weight:700;font-size:12px;letter-spacing:.1em;text-transform:uppercase;border-radius:999px;padding:6px 14px}
+.intro-wrap h1{font-family:Unbounded,Inter,sans-serif;font-size:42px;line-height:1.15;margin:18px 0 14px}
+.intro-wrap h1 span{background:var(--lime);color:#1d2131;padding:0 10px;border-radius:10px}
+.intro-wrap .lead-p{font-size:17px;line-height:1.65;color:#cfd3e2;max-width:760px}
+.facts{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:30px 0}
+.fact{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:18px}
+.fact .fi{font-size:28px}
+.fact b{display:block;margin:10px 0 4px;font-size:15px}
+.fact span{font-size:13px;color:#b9bed0;line-height:1.5}
+.phases{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:30px}
+.phase{border-radius:16px;padding:18px 20px;background:#2c3247;border:1px solid #454d6b}
+.phase .pn{font-size:12px;font-weight:700;color:var(--lime);letter-spacing:.08em;text-transform:uppercase}
+.phase b{display:block;margin:6px 0;font-size:16px}
+.phase span{color:#b9bed0;font-size:14px;line-height:1.55}
+#toast{position:fixed;top:66px;left:50%;transform:translateX(-50%);z-index:1050;background:#fff;color:#1f2433;font-size:13.5px;font-weight:600;border-radius:999px;padding:9px 18px;box-shadow:0 8px 24px rgba(0,0,0,.35);display:none;animation:fadeIn .25s}
+@media (max-width:900px){.facts{grid-template-columns:1fr 1fr}.phases{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="spot"></div>
+<div id="coach"></div>
+<div id="qp"></div>
+<div id="caption"></div>
+<div id="toast"></div>
+<div id="modal"></div>
+<div id="intro"></div>
+
+<script>
+/* =========================================================
+   ASSETS
+   ========================================================= */
+const IMG = 'Pictures_students/';
+const AUDIO = 'Audios/';
+const P = {
+  sofia: IMG + 'girl.png',
+  alexander: IMG + 'boy%202.png',
+  valentina: IMG + 'girl%202.png',
+  mateo: IMG + 'boy.png',
+  getReadyTop: IMG + 'c2f3c92a-c4de-40c4-abfc-6efb1add6968.png',
+  getReadyBottom: IMG + '2a35aafd-d169-4e99-a7cb-4658f3c788be.png',
+  equipment: IMG + '9fb18454-c457-49e1-aca0-4acc7535e017.jpg',
+  welcomeTop: IMG + '0183f2c0-5241-4e38-a786-28e7ea158c0c.png',
+  welcomeBottom: IMG + '7f041875-ef1a-4755-b64d-c8b0bcb358f9.png',
+  micHelp: 'https://mp.kodland.org/task_description_materials/4d1ea1fb-0c4c-4550-86e3-ca4c1b19212b.png',
+  catGif: IMG + 'eb25118b-df20-4954-873f-d72af36305ec.gif',
+  kodGif: IMG + 'b7d9588c-f5e5-4fa1-b8ce-79df34915afa.gif',
+  capsuleTop: IMG + '2d1619ae-274d-4546-a4fe-4f6b956125d3.png',
+  workshopTop: IMG + '7e332ccc-20cc-42fb-b622-e2f975e97ed9.png',
+  workshopBottom: IMG + 'e28a4a9c-9045-4aea-ae32-c2d7fc3f0cfc.png',
+  flipanim: IMG + 'c2188136-40bc-496d-97de-6dad78899624.png',
+  video: 'https://mp.kodland.org/task_description_materials/5ba2b201-1ba4-4588-a21c-bf8b2a9a3690.mp4'
+};
+
+/* =========================================================
+   ICONS
+   ========================================================= */
+const I = {
+  back:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>',
+  exit:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="10" height="18" rx="1.5" fill="#ff4d5e"/><path d="M14 12h7m-3-3 3 3-3 3" stroke="#ff4d5e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  grid:'<svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg>',
+  cube:'<svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M12 2 3 6.5l9 4.5 9-4.5L12 2Z"/><path d="M3 8.2v9.3l8 4.3v-9.4L3 8.2Zm10 4.2v9.4l8-4.3V8.2l-8 4.2Z" opacity=".85"/></svg>',
+  list:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M9 6h12M9 12h12M9 18h12"/><circle cx="4" cy="6" r="1" fill="#fff"/><circle cx="4" cy="12" r="1" fill="#fff"/><circle cx="4" cy="18" r="1" fill="#fff"/></svg>',
+  left:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c8cde0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>',
+  right:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
+  micOff:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9aa0b5" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 12 4.9M12 18v3M3 3l18 18"/></svg>',
+  chev:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>',
+  camOff:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9aa0b5" stroke-width="2" stroke-linecap="round"><path d="M15 10l5-3v10l-5-3M3 3l18 18"/><rect x="2" y="6" width="13" height="12" rx="2"/></svg>',
+  pip:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><rect x="12" y="11" width="6" height="5" rx="1" fill="#fff"/></svg>',
+  hand:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 11V5a1.5 1.5 0 0 1 3 0v5M10 10V3.5a1.5 1.5 0 0 1 3 0V10M13 10V4.5a1.5 1.5 0 0 1 3 0V11M16 11V7a1.5 1.5 0 0 1 3 0v7a7 7 0 0 1-7 7h-.5a6.5 6.5 0 0 1-5-2.4L3.6 14.8a1.5 1.5 0 0 1 2.3-1.9L7 14"/></svg>',
+  smile:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M8 14.5a5 5 0 0 0 8 0"/><circle cx="9" cy="10" r=".6" fill="#fff"/><circle cx="15" cy="10" r=".6" fill="#fff"/></svg>',
+  laptop:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><rect x="4" y="5" width="16" height="11" rx="1.5"/><path d="M2 19h20"/></svg>',
+  wb:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M14 4H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-9"/><path d="M19 2v6M16 5h6"/></svg>',
+  layers:'<svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="m12 2 10 5-10 5L2 7l10-5Z"/><path d="m2 12 10 5 10-5M2 17l10 5 10-5" fill="none" stroke="#fff" stroke-width="2" stroke-linejoin="round"/></svg>',
+  users:'<svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><circle cx="9" cy="8" r="4"/><path d="M2 20a7 7 0 0 1 14 0Z"/><path d="M16 4a4 4 0 0 1 0 8M18 14a6 6 0 0 1 4 6h-3" fill="none" stroke="#fff" stroke-width="2"/></svg>',
+  chat:'<svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M4 4h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H9l-5 4V5a1 1 0 0 1 1-1Z"/><path d="M8 9h8M8 12h5" stroke="#3c4360" stroke-width="2" stroke-linecap="round"/></svg>',
+  doc:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7d84a0" stroke-width="2"><path d="M14 3H6v18h12V7l-4-4Z"/><path d="M9 13h6M9 17h6"/></svg>',
+  gear:'<svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M19.4 13a7.6 7.6 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.4 7.4 0 0 0-1.7-1L15 3h-4l-.3 2.9a7.4 7.4 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.6 7.6 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.4 7.4 0 0 0 1.7 1L11 21h4l.3-2.9a7.4 7.4 0 0 0 1.7-1l2.5 1 2-3.5L19.4 13ZM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7Z"/></svg>',
+  atom:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><ellipse cx="12" cy="12" rx="10" ry="4"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)"/><circle cx="12" cy="12" r="1.5" fill="#fff"/></svg>',
+  sun:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7f87a8" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>',
+  moon:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7f87a8" stroke-width="2"><path d="M20 14.5A8 8 0 1 1 9.5 4 6.5 6.5 0 0 0 20 14.5Z"/></svg>',
+  check:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg>',
+  link:'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#5b8cff" stroke-width="2.4" stroke-linecap="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>'
+};
+const BARS = '<span class="bars"><i></i><i></i><i></i><i></i></span>';
+
+/* =========================================================
+   LESSON CONTENT (Digital Creativity lvl 2 — Lesson 1)
+   ========================================================= */
+const tnotes = (html, id) => `<div class="tnotes"${id ? ` id="${id}"` : ''}><div class="tn-label">Teacher notes</div>${html}</div>`;
+const spoiler = (t, html) => `<details class="spoiler"><summary>${t}</summary><div class="sp-body">${html}</div></details>`;
+const note = (t, html) => `<div class="note"><div class="note-t">${t}</div>${html}</div>`;
+const media = (src, html, narrow) => `<div class="media${narrow ? ' narrow' : ''}"><div class="media-img"><img src="${src}" alt=""></div><div class="media-c">${html}</div></div>`;
+const banner = src => `<img class="banner" src="${src}" alt="">`;
+const ul = items => `<ul>${items.map(i => `<li>${i}</li>`).join('')}</ul>`;
+const ol = items => `<ol>${items.map(i => `<li>${i}</li>`).join('')}</ol>`;
+
+const ACTIVITIES = [
+  { title:'Get ready for your first creative mission 🚀', html:
+    tnotes(`
+      <h1>Preparing for the lesson: Animating a Name in FlipAnim</h1>
+      <h2>Lesson overview</h2>
+      <p>This is the first lesson in the Digital Creativity lvl 2 programme, delivered in a parallel format. The student works one-to-one with the tutor at the beginning and end of the lesson, then completes the main practical tasks independently using the cards. The lesson project is a GIF animation of the student’s own name.</p>
+      <p>The main focus of the lesson is to give the student a quick experience of success and introduce the principle of frame-by-frame animation: movement is created by changing frames in sequence.</p>
+      ${spoiler('Lesson Story Mission', '<p>The student begins working in Creativia Studio as a digital animator. Their first mission is to bring their name to life by making the letters appear one by one.</p>')}
+      ${spoiler('Main Lesson Goal', '<p>Help the student understand the principle of frame-by-frame animation and use it to create their own GIF.</p>')}
+      ${spoiler('Key Result', '<p>By the end of the lesson, the student has:</p>' + ul(['created a GIF animation of their own name;','made the letters appear in sequence across different frames;','made sure the name is readable, the animation works, and it is saved on the computer.']))}
+      ${note('Please note!', '<p>References to group activities are not relevant to this lesson format.</p>')}
+      <video controls preload="none" src="${P.video}"></video>
+      <h2>Lesson format: parallel</h2>
+      <p>The lesson is designed for <strong>60 minutes per student</strong>. There are no group activities. The tutor provides support at the beginning and end; during self-study, they check in from time to time and whenever the student asks for help.</p>
+      <h2>The tutor’s role</h2>
+      <p>In the synchronous parts, the tutor sets the tone, explains the goal, and checks that the technical setup is ready. During self-study, the tutor does not lead the lesson for the student; they provide targeted help when the student asks. The cards include reminders to call the tutor before saving and at key steps.</p>
+      <p>Key support algorithm: <strong>one new letter — one new frame</strong>. Start with a minimum working result, then add decorations.</p>
+      ${spoiler('Teaching Focus', '<p>The lesson follows a deductive approach: the student first sees a finished animation, then explores how it was made and applies the principle in their own project.</p><p>Feedback: <strong>Tutor + Self</strong>. There is no peer feedback. AI is not used in this lesson (N/A); in later lessons in the module, AI is added as a third feedback channel where appropriate.</p><p>The main focus is the feeling: “I can create a working digital project on my own.” Mistakes are a normal part of the creative process.</p>')}
+      ${spoiler('Important points', ul(['The student may draw their whole name on one frame. Remind them to duplicate the frame before adding each new letter.','Leave time for saving, and check that the GIF has downloaded successfully and opens correctly.','Support students who are unhappy with their drawing: the idea, independence, and a working animation matter more than perfect lines.','If FlipAnim does not load, suggest BrushNinja as an alternative service.']))}
+      <h2>Lesson ending</h2>
+      <p>The student shows their animation to the tutor by sharing their screen. The tutor highlights one specific strength and helps the student identify the next step for improvement.</p>
+      <h2>Next lesson</h2>
+      <p>In the next lesson, the student will explore Canva and begin creating a video introduction, where they can use the GIF of their name.</p>
+      <p>For Canva registration, prepare an email address in advance: the student’s own or a parent’s.</p>
+      <h3>Next, review the tutor notes in the synchronous cards and in the self-study cards where support may be needed.</h3>`) +
+    banner(P.getReadyTop) +
+    `<h1>Get ready for your first creative mission 🚀</h1>
+     <blockquote><p>In just a few minutes, you’ll enter Creativia Studio and create your first animation — bringing your own name to life! Check that everything is ready for a comfortable start.</p></blockquote>` +
+    media(P.equipment, '<h3>⚙️ Check your equipment</h3>' + ul(['your sound is on and you can hear the lesson clearly;','your microphone is working;','The camera turns on and shows your picture.']), true) +
+    `<h3 id="space-ready">✨ Get your space ready</h3>` +
+    ul(['Find a quiet place where you won’t be distracted;','Put a glass of water nearby;','Sit comfortably and get ready to create!']) +
+    note('💡 The structure of the lesson', '<p>First, you’ll work with your tutor for a little while. Then you’ll work through the cards on your own. You can ask your tutor for help if something is unclear or isn’t working.</p>') +
+    banner(P.getReadyBottom)
+  },
+  { title:'Welcome to Creativia Studio! ✨', html:
+    banner(P.welcomeTop) +
+    `<h1>Welcome to Creativia Studio! ✨</h1>
+     <blockquote><p>Today, you’ll create your first digital project and bring your own name to life. First, let’s make sure you can see and hear each other clearly.</p></blockquote>` +
+    media(P.equipment, '<h3>🎯 Your task</h3>' + ol(['Check that you can see and hear your tutor.','Turn on your microphone and camera.','Say your name and how old you are.'])) +
+    spoiler('I can’t find the button to turn on my microphone or camera', media(P.micHelp, ol(['Look at the bottom bar of the lesson window.','Find the microphone icon 🎙️ and the camera icon 🎥.','Click the right icon to turn on the device.']))) +
+    spoiler('I can’t hear my tutor. What should I do?', ol(['Check the volume on your computer.','Make sure the correct speaker is selected in the settings.','Raise your hand ✋ so your tutor notices the problem.'])) +
+    spoiler('Can’t turn on your microphone?', ol(['Check whether microphone access is allowed.','Click the arrow next to the microphone icon and choose the right device.','Raise your hand ✋ and wait for help from your tutor.'])) +
+    spoiler('Can’t turn on your camera?', ol(['Check whether camera access is allowed.','Close any other programmes that might be using the camera.','If the camera still doesn’t work, keep taking part using your voice.'])) +
+    banner(P.welcomeBottom) +
+    tnotes(`<p><strong>Format:</strong> LIVE.</p><p><strong>Time:</strong> 1–2 minutes.</p><p><strong>Card objective:</strong> create a friendly start to the lesson and check technical readiness through observable actions.</p><p><strong>Tutor instructions:</strong> turn on the microphone and camera, say hello, and hear the student’s short greeting. This is a 1:1 format, so there is no need to wait for a group turn.</p><p><strong>Points to note:</strong> contact technical support for serious technical issues.</p>`)
+  },
+  { title:'Let’s get to know each other! 👋', html:
+    banner(P.capsuleTop) +
+    `<h1>Let’s get to know each other! 👋</h1>
+     <p class="sim-note">Simulator note: the full content of this card will be added in a later version.</p>`
+  },
+  { title:'How will the lesson work? 🧭', html:
+    banner(P.welcomeTop) +
+    `<h1>How will the lesson work? 🧭</h1>
+     <blockquote><p>Today, you'll work independently using task cards. Your tutor is nearby, so call them over if something won't open, isn't working or doesn't make sense.</p></blockquote>` +
+    media(P.catGif, '<h3>When should you call the tutor over?</h3>' + ul(['you have a question;','you can\'t find the right button or setting;','a website won\'t open or an animation is behaving strangely;','before saving your project—if you\'re not sure everything is ready.'])) +
+    note('💡 Important', '<p>If it doesn\'t work the first time, that isn\'t a failure. It\'s a sign to try again!</p>') +
+    banner(P.welcomeBottom) +
+    tnotes(`<p><strong>Format:</strong> SYNCHRONOUS.</p><p><strong>Time:</strong> 1 minute.</p><p><strong>Card goal:</strong> to explain the parallel format and help students feel less worried about working independently.</p><p><strong>What the tutor should do:</strong> show the student how to call the tutor over, and explain that most of the lesson will be completed using task cards.</p>`)
+  },
+  { title:'What can your name tell people about you? ✨', html:
+    `<h1>What can your name tell people about you? ✨</h1>
+     <blockquote><p>To help tell people about yourself, you’ll first write and bring your own name to life. Let’s look at an example and find out how to create something like it.</p></blockquote>
+     <img class="center-img" src="${P.kodGif}" alt="">
+     <h3>🎯 Your task</h3>
+     <p>Look at the animation with your tutor and notice how it was made.</p>
+     <p><strong>What features did you notice in the animation?</strong></p>
+     <div class="quiz">
+       <label><input type="checkbox"> The letters appear one at a time</label>
+       <label><input type="checkbox"> The letters have different colours, shapes or details</label>
+       <label><input type="checkbox"> At the end, you can read the whole name</label>
+       <label><input type="checkbox"> The whole name appears at once</label>
+     </div>
+     <blockquote><p>After answering, click the «Submit» button.</p></blockquote>
+     <button class="submit" type="button">✔ Submit</button>
+     <blockquote><p>For example, one letter could remind people of your favourite game, animal, sport or creative hobby.</p></blockquote>
+     <h2>Our mission plan</h2>` +
+    ol(['Open the editor and draw the first letter.','Learn how to add the next letter later.','Put your full name together, frame by frame.','Check your animation, save it as a GIF, and show it to your tutor.'])
+  },
+  { title:'Opening the animation workshop 🛠️', html:
+    banner(P.workshopTop) +
+    `<h1>Opening the animation workshop 🛠️</h1>
+     <img class="center-img" src="${P.flipanim}" alt="FlipAnim editor">` +
+    banner(P.workshopBottom) +
+    tnotes(`<p><strong>Format:</strong> SYNCHRONOUS (end of the introduction).</p><p><strong>Time:</strong> 1 minute.</p><p><strong>Card goal:</strong> make sure the service is open and help the student move safely into self-study.</p><p><strong>What the tutor should do:</strong> send the link, wait for confirmation that the student can see the canvas, and remind them how to call the tutor. The student then works independently using the cards.</p><p><strong>What to pay attention to:</strong> if FlipAnim does not open, switch straight to BrushNinja. Do not start drawing the whole project together: the learner continues with the cards.</p>`, 'tn-last')
+  }
+];
+['First letter — first version of your project 🖍️','Explore the drawing tools 🎨','Move, rotate and resize 🔄','How can you make the second letter appear later? 🤔','The secret of frame-by-frame animation 🎞️','One more frame, one more letter','Bring the rest of your letters to life 🚀','Check your animation ✅','Save and submit your animation 💾','How does your animation work? 🔍','Mini Animation Premiere! 🎬','What did you discover today? ✨','Get ready to use Canva 🖼️']
+  .forEach(t => ACTIVITIES.push({ title:t, html:`<h1>${t}</h1><p class="sim-note">Simulator note: this card isn’t part of the current scenarios yet.</p>` }));
+
+/* =========================================================
+   STATE
+   ========================================================= */
+let S;
+function freshState(){
+  return {
+    phase:'intro',          // intro | guide | game | done
+    view:'console',         // console | room
+    room:null,
+    dropdown:false,
+    clock:-1,               // minutes after 17:00 (-1 = 16:59)
+    lives:3, diamonds:0,
+    step:0,
+    speaking:null,          // room index currently speaking
+    following:false,
+    busy:false, tried:[],
+    rooms:[
+      { name:'Sofia',     photo:P.sofia,     joined:false, mode:'classroom', activity:null, lead:false, scrollTo:null },
+      { name:'Alexander', photo:P.alexander, joined:false, mode:'classroom', activity:null, lead:false, scrollTo:null },
+      { name:'Valentina', photo:P.valentina, joined:false, mode:'classroom', activity:null, lead:false, scrollTo:null },
+      { name:'Mateo',     photo:P.mateo,     joined:false, mode:'classroom', activity:null, lead:false, scrollTo:null }
+    ]
+  };
+}
+const $ = s => document.querySelector(s);
+const fmtClock = m => m < 0 ? '16:59' : `17:${String(m).padStart(2,'0')}`;
+const curRoom = () => S.rooms[S.room];
+
+/* =========================================================
+   CLASSROOM RENDERING
+   ========================================================= */
+function teacherTile(extraClass=''){
+  return `<div class="vt teacher ${extraClass}"><div class="av">T</div><span class="lbl">Tutor (you)</span></div>`;
+}
+function studentTile(i){
+  const r = S.rooms[i];
+  const follow = (S.following && S.room === i && r.lead) ? `<span class="follow-badge">${I.link} Following the teacher</span>` : '';
+  return `<div class="vt student ${S.speaking === i ? 'speaking' : ''}">${follow}<img src="${r.photo}" alt="${r.name}"><span class="lbl">${r.name} ${BARS}</span><button class="dots" data-action="deco">⋯</button></div>`;
+}
+function roomBox(i){
+  const r = S.rooms[i];
+  const inner = r.joined
+    ? `<div class="minis">
+         <div class="mini"><div class="av">T</div><span class="lbl">Tutor (you)</span></div>
+         <div class="mini"><img src="${r.photo}" alt=""><span class="lbl">${r.name} ${BARS}</span></div>
+       </div>`
+    : `<div class="av">T</div><span class="lbl">Tutor (you)</span>`;
+  return `<div class="room-box ${r.joined ? 'joined' : ''}" id="room-${i}" data-action="enterRoom" data-arg="${i}">
+            <div class="room-inner"><span class="tag">${r.name}</span>${r.joined ? '<div style="height:100%;width:100%;padding-top:0">' + inner + '</div>' : inner}</div>
+          </div>`;
+}
+function header(){
+  const online = S.rooms.filter(r => r.joined).length;
+  const hearts = [0,1,2].map(k => `<span class="heart ${k >= S.lives ? 'lost' : ''}" id="heart-${k}">❤️</span>`).join('');
+  const mode = S.phase === 'guide' ? '<span class="hud-chip mode">Guided tour</span>' : S.phase === 'game' || S.phase === 'done' ? '<span class="hud-chip mode">Decision game</span>' : '';
+  return `<header class="cr-head">
+    ${S.view === 'room' ? `<button class="back" data-action="back">${I.back}</button>` : ''}
+    <b>Parallel group #183</b><span class="muted">${online} · 4 online</span>
+    <div class="hud">${mode}<span class="hud-chip">🕐 ${fmtClock(S.clock)}</span><span class="hud-chip">${hearts}</span><span class="hud-chip" id="dia">💎 ${S.diamonds}</span></div>
+    <button class="leave" data-action="deco">${I.exit} Leave</button>
+  </header>`;
+}
+function consoleView(){
+  return `<main class="console">${[0,1,2,3].map(roomBox).join('')}</main>`;
+}
+function toolbar(r){
+  const tasks = r.mode === 'tasks';
+  return `<div class="tb">
+    <div class="tb-l">
+      <button class="tb-btn ${!tasks ? 'on' : ''}" data-action="classroom">${I.grid} Classroom</button>
+      <div class="tb-group ${tasks ? 'on' : ''}">
+        <button class="tb-btn" id="btnTasks" data-action="openTasks">${I.cube} Assignments</button>
+        <button class="tb-ico" id="btnList" data-action="toggleDropdown">${I.list}</button>
+      </div>
+      ${tasks ? `<div class="nav"><button data-action="prevTask" data-tip="Previous task">${I.left}</button><button id="btnNext" data-action="nextTask" data-tip="Next task">${I.right}</button></div>
+      <div class="lead ${r.lead ? 'on' : ''}" id="leadToggle" data-action="toggleLead" data-tip="Lead the group">Lead the group <i class="sw"></i></div>` : ''}
+    </div>
+    <div class="tb-c">
+      <div class="pair"><button class="ib" data-action="deco">${I.micOff}</button><button class="ib" data-action="deco">${I.chev}</button></div>
+      <div class="pair"><button class="ib" data-action="deco">${I.camOff}</button><button class="ib" data-action="deco">${I.chev}</button></div>
+      <button class="ib" data-action="deco">${I.pip}</button>
+      <button class="ib" data-action="deco">${I.hand}</button>
+      <button class="ib" data-action="deco">${I.smile}</button>
+      <button class="ib" data-action="deco">${I.laptop}</button>
+      <button class="ib" data-action="deco">${I.wb}</button>
+      <button class="ib" data-action="deco">${I.layers}</button>
+      <button class="ib cnt" data-action="deco">${I.users} 2</button>
+      <button class="ib" data-action="deco">${I.chat}</button>
+      ${tasks ? `<button class="ib" data-action="deco">${I.doc}</button>` : ''}
+      <button class="ib" data-action="deco">${I.gear}</button>
+    </div>
+    ${!tasks ? `<button class="end" data-action="deco">${I.exit} End session</button>` : ''}
+  </div>`;
+}
+function dropdown(r){
+  if (!S.dropdown) return '';
+  return `<div class="dd"><div class="dd-scroll" id="ddScroll">${ACTIVITIES.map((a,i) =>
+    `<div class="dd-item ${i === r.activity ? 'sel' : ''}" id="dd-${i}" data-action="pickActivity" data-arg="${i}"><span>${a.title}</span>${i === r.activity ? I.check : ''}</div>`).join('')}</div></div>`;
+}
+function roomView(){
+  const r = curRoom();
+  const others = [0,1,2,3].filter(i => i !== S.room).map(roomBox).join('');
+  let stage;
+  if (r.mode === 'tasks' && r.activity !== null){
+    const a = ACTIVITIES[r.activity];
+    stage = `<div class="stage tasks">
+      <div class="kl">
+        <div class="kl-head"><span class="kl-logo">kodland</span>
+          <div class="kl-right"><span class="theme">${I.sun}<i class="sw"></i>${I.moon}</span><span class="lang">EN ˅</span><span class="kl-user">Tutor <i class="kl-av"></i></span></div></div>
+        <div class="kl-body"><div class="kl-rail"><span class="atom">${I.atom}</span></div>
+          <div class="kl-main"><div class="kl-title">${a.title}</div>
+            <div class="task-scroll" id="taskScroll"><div class="task">${a.html}</div></div></div></div>
+      </div>
+      <div class="right-col">${teacherTile()}${studentTile(S.room)}</div>
+    </div>`;
+  } else {
+    stage = `<div class="stage">${teacherTile()}${studentTile(S.room)}</div>`;
+  }
+  return `<main class="room-layout">
+    <aside class="side">${others}</aside>
+    <section class="frame">
+      <span class="tag frame-tag">${r.name} <i class="dot"></i></span>
+      ${stage}
+      ${dropdown(r)}
+      ${toolbar(r)}
+    </section>
+  </main>`;
+}
+
+let lastKey = null;
+function render(){
+  const sc = $('#taskScroll'), dd = $('#ddScroll');
+  const prevTop = sc ? sc.scrollTop : 0, prevDD = dd ? dd.scrollTop : 0;
+  const key = S.view === 'room' ? `${S.room}-${curRoom().activity}-${curRoom().mode}` : 'console';
+  $('#app').innerHTML = header() + (S.view === 'console' ? consoleView() : roomView());
+  const sc2 = $('#taskScroll');
+  if (sc2){
+    const r = curRoom();
+    sc2.style.scrollBehavior = 'auto';
+    if (r.scrollTo){ const el = document.getElementById(r.scrollTo); if (el) sc2.scrollTop = el.offsetTop - 20; r.scrollTo = null; }
+    else if (key === lastKey) sc2.scrollTop = prevTop;
+    sc2.style.scrollBehavior = '';
+  }
+  const dd2 = $('#ddScroll'); if (dd2) dd2.scrollTop = prevDD;
+  lastKey = key;
+  requestAnimationFrame(placeOverlays);
+  setTimeout(placeOverlays, 400); // re-check once images/fonts have settled
+}
+
+/* =========================================================
+   CLASSROOM ACTIONS (real behaviour of the platform)
+   ========================================================= */
+function perform(action, arg){
+  const r = S.room !== null ? curRoom() : null;
+  switch(action){
+    case 'enterRoom':
+      if (!S.rooms[arg].joined) return false;
+      S.view = 'room'; S.room = +arg; S.dropdown = false; break;
+    case 'back': S.view = 'console'; S.dropdown = false; break;
+    case 'classroom': r.mode = 'classroom'; S.dropdown = false; break;
+    case 'openTasks':
+      if (r.activity === null) S.dropdown = !S.dropdown;
+      else { r.mode = 'tasks'; S.dropdown = false; }
+      break;
+    case 'toggleDropdown': S.dropdown = !S.dropdown; break;
+    case 'pickActivity': r.activity = +arg; r.mode = 'tasks'; S.dropdown = false; break;
+    case 'toggleLead': r.lead = !r.lead; break;
+    case 'nextTask': if (r.activity < ACTIVITIES.length - 1) r.activity++; break;
+    case 'prevTask': if (r.activity > 0) r.activity--; break;
+    default: return false;
+  }
+  render();
+  return true;
+}
+
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-action]');
+  if (!el || !$('#app').contains(el)) return;
+  const action = el.dataset.action, arg = el.dataset.arg;
+  const key = arg !== undefined ? `${action}:${arg}` : action;
+
+  if (S.phase === 'guide'){
+    const step = GUIDE[S.step];
+    if (step.accept && step.accept.includes(key)){ perform(action, arg); nextGuide(); }
+    else nudge();
+    return;
+  }
+  if (S.phase === 'game'){
+    gameClick(action, arg, key);
+    return;
+  }
+});
+
+/* =========================================================
+   GUIDED TOUR
+   ========================================================= */
+function join(i){
+  S.rooms[i].joined = true;
+  toast(`🔔 ${S.rooms[i].name} joined the lesson`);
+}
+const GUIDE = [
+  { title:'Your Classroom console', next:true, clock:-1,
+    text:'This is what you see when you open a parallel lesson. Each box is a separate <b>room</b> — one per student in your group. Nobody has arrived yet, so every room only shows your own camera.' },
+  { title:'A student has arrived!', clock:0, enter:() => join(0), target:'#room-0', accept:['enterRoom:0'],
+    text:'<b>Sofia</b> has just joined her room — you can see her camera next to yours.<br><br>Click on Sofia’s room to go in.' },
+  { title:'Welcome Sofia', clock:1, next:true,
+    text:'You’re now inside Sofia’s room. You can see her camera here, and on the left the other rooms, which are still empty.<br><br>Start with some <b>small talk</b>: greet Sofia and help her feel comfortable. Remember: you have <b>10 minutes</b> to introduce the lesson and present what she’ll do today.' },
+  { title:'Open the lesson', target:'.tb-group', accept:['openTasks','toggleDropdown'],
+    text:'To show the presentation, click <b>Assignments</b>. Notice that the button turns blue when your mouse is over it.' },
+  { title:'Choose the first activity', target:'#dd-0', accept:['pickActivity:0'],
+    text:'This is the list of today’s activities. Click the first one: <b>“Get ready for your first creative mission”</b>.' },
+  { title:'Teacher notes', clock:2, target:'#taskScroll .tnotes', next:true,
+    text:'This box is the <b>Teacher notes</b>. Only you can see it — Sofia sees only the activity content.<br><br>The notes are the new wiki: the guide you should study <b>before</b> every lesson.' },
+  { title:'Lead the group', target:'#leadToggle', accept:['toggleLead'],
+    text:'Now turn on <b>Lead the group</b>. With it on, every time you move through the activities and the presentation, Sofia’s screen moves with you at the same pace.<br><br>Click the switch — it turns blue when it’s active.' },
+  { title:'Sofia is following you', clock:3, target:'#taskScroll', next:true,
+    text:'<b>Lead the group</b> is on ✅<br><br>Scroll through the activity to see all its content. This is exactly what Sofia sees on her screen (without the Teacher notes).' },
+  { title:'Next activity', target:'#btnNext', accept:['nextTask'],
+    text:'The arrow pointing right takes you to the <b>next activity</b> of the lesson. Click it.' },
+  { title:'Classroom tools', clock:4, target:'#taskScroll', next:true,
+    text:'Because this is Sofia’s first lesson, this card teaches her to use the Classroom tools — microphone, camera… and how to <b>raise her hand ✋</b>.<br><br>That’s key in parallel lessons: even when you’re in another student’s room, you’ll know she needs help. Open the help sections to see what she sees.' },
+  { title:'Keep going', target:'#btnNext', accept:['nextTask'],
+    text:'Click <b>Next task</b> to continue.' },
+  { title:'Getting to know each other', clock:5, target:'#btnNext', accept:['nextTask'],
+    text:'Take a moment to get to know Sofia. When you’re ready, click <b>Next task</b>.' },
+  { title:'How the lesson works', clock:6, target:'#taskScroll', next:true,
+    text:'This card explains how the lesson works: most of it is <b>independent work</b> with task cards, and Sofia can call you over whenever she needs you.<br><br>Show her how to call you, and reassure her that working on her own is normal — you’re nearby.' },
+  { title:'Keep going', target:'#btnNext', accept:['nextTask'],
+    text:'Click <b>Next task</b> to continue.' },
+  { title:'Explore the example', clock:7, target:'#btnNext', accept:['nextTask'],
+    text:'Look at the example animation together and talk about how it was made. Then click <b>Next task</b>.' },
+  { title:'The last synchronous card', clock:9, target:'#tn-last', next:true, scrollTo:'tn-last',
+    text:'Read the Teacher notes: <b>Format: SYNCHRONOUS (end of the introduction)</b>. This is the last card you do together. Keep an eye on the time — you’ll usually get here <b>before</b> the 10 minutes are up.<br><br>Say goodbye for now: confirm that everything is clear, remind Sofia how to raise her hand, and leave her working on her own with the cards.' },
+  { title:'A new student has arrived', clock:10, enter:() => join(1), target:'#room-1', accept:['enterRoom:1'], last:true,
+    text:'It’s 17:10 and <b>Alexander</b> has just joined his room — look at the sidebar.<br><br>This is the end of the guided tour. From now on, the decisions are yours! Click Alexander’s room to go and see him.' }
+];
+
+function startGuide(){
+  $('#intro').style.display = 'none';
+  S.phase = 'guide'; S.step = 0;
+  enterStep();
+}
+function enterStep(){
+  const st = GUIDE[S.step];
+  if (st.clock !== undefined) S.clock = st.clock;
+  if (st.enter) st.enter();
+  if (st.scrollTo && S.room !== null) curRoom().scrollTo = st.scrollTo;
+  render();
+  if (st.scrollTo){ const el = document.getElementById(st.scrollTo), sc = $('#taskScroll'); if (el && sc){ sc.style.scrollBehavior='auto'; sc.scrollTop = el.offsetTop - 20; sc.style.scrollBehavior=''; } }
+}
+function nextGuide(){
+  const st = GUIDE[S.step];
+  if (st.last){ finishGuide(); return; }
+  S.step++;
+  enterStep();
+}
+function nudge(){
+  const c = $('#coach');
+  c.classList.remove('shake'); void c.offsetWidth; c.classList.add('shake');
+}
+
+function renderCoach(){
+  const coach = $('#coach'), spot = $('#spot');
+  if (S.phase !== 'guide'){ coach.style.display = 'none'; spot.style.display = 'none'; return; }
+  const st = GUIDE[S.step];
+  coach.innerHTML = `<div class="c-step">Guided tour · ${S.step + 1}/${GUIDE.length}</div><h4>${st.title}</h4><p>${st.text}</p>
+    <div class="c-foot">${st.next ? '<span></span><button class="btn-p" id="coachNext">Next →</button>' : '<span class="c-hint">👆 Click the highlighted element</span><span></span>'}</div>`;
+  coach.style.display = 'block';
+  const btn = $('#coachNext'); if (btn) btn.onclick = nextGuide;
+
+  const t = st.target ? document.querySelector(st.target) : null;
+  const vw = innerWidth, vh = innerHeight, m = 16, pad = 6;
+  let r = null;
+  if (t){
+    r = t.getBoundingClientRect();
+    // keep spotlight inside the scroll container when the target is inside it
+    const sc = t.closest('.task-scroll');
+    if (sc && sc !== t){
+      const b = sc.getBoundingClientRect();
+      r = { left:r.left, right:r.right, top:Math.max(r.top,b.top), bottom:Math.min(r.bottom,b.bottom), width:r.width };
+      r.height = Math.max(0, r.bottom - r.top);
+    }
+    Object.assign(spot.style, { display:'block', left:(r.left-pad)+'px', top:(r.top-pad)+'px', width:(r.width+pad*2)+'px', height:(r.height+pad*2)+'px' });
+  } else spot.style.display = 'none';
+
+  const cw = coach.offsetWidth, ch = coach.offsetHeight;
+  let x, y;
+  const fits = (x,y) => x >= 8 && y >= 64 && x + cw <= vw - 8 && y + ch <= vh - 8;
+  const clampX = x => Math.min(Math.max(8, x), vw - cw - 8);
+  const clampY = y => Math.min(Math.max(64, y), vh - ch - 8);
+  if (!r){ x = (vw - cw) / 2; y = (vh - ch) / 2; }
+  else {
+    const cands = [
+      [r.right + m + pad, clampY(r.top + r.height/2 - ch/2)],
+      [r.left - m - pad - cw, clampY(r.top + r.height/2 - ch/2)],
+      [clampX(r.left + r.width/2 - cw/2), r.top - m - pad - ch],
+      [clampX(r.left + r.width/2 - cw/2), r.bottom + m + pad]
+    ];
+    const ok = cands.find(c => fits(c[0], c[1]));
+    if (ok){ [x, y] = ok; } else { x = vw - cw - 20; y = 76; }
+  }
+  coach.style.left = x + 'px'; coach.style.top = y + 'px';
+}
+
+function finishGuide(){
+  S.phase = 'game';
+  // Alexander's room as the tutor finds it: he's already on the first activity, Lead the group is OFF
+  const a = S.rooms[1];
+  a.mode = 'tasks'; a.activity = 0; a.lead = false; a.scrollTo = 'space-ready';
+  render();
+  modal(`<div class="m-card info">
+    <div class="m-icon">🎮</div>
+    <h2>The decision game begins</h2>
+    <p>You’ve finished the guided tour. Now it’s your turn: in each situation, choose what you would do as the tutor.</p>
+    <p>Correct decisions earn a <b>💎 diamond</b>. A wrong decision costs a <b>❤️ life</b>, but you keep playing. If you lose all 3 lives, you’ll start the simulation again from the beginning.</p>
+    <div class="m-lives">${'❤️'.repeat(S.lives)}</div>
+    <div class="btns"><button class="btn-y" id="mGo">Let’s go</button></div></div>`);
+  $('#mGo').onclick = () => { closeModal(); showQuestion(); };
+}
+
+/* =========================================================
+   DECISION GAME
+   ========================================================= */
+const QUESTIONS = [
+  { tag:'Decision 1', who:'Alexander · 17:10', room:1,
+    q:'You’re with <b>Alexander</b>, your 17:10 student. He arrived on time — great! You can see he’s already in the activities. What should you do before moving on?',
+    options:[
+      { label:'Say: “Alexander, can you click <b>Lead the group</b>?”', kind:'say', say:'Alexander, can you click “Lead the group”?', audio:'Alexander_1_wrong.mp3',
+        title:'Wrong choice — you lost a life',
+        why:'Students don’t have the <b>Lead the group</b> option in their Classroom, and they’re not the ones who turn it on. Only you, the tutor, can activate it.' },
+      { label:'Turn on <b>Lead the group</b>', kind:'do', correct:true,
+        title:'Correct! You earned a diamond',
+        why:'Well done! With <b>Lead the group</b> on, Alexander’s screen now follows yours: every activity and every scroll you make, he sees at the same time.' },
+      { label:'Say: “Alexander, can you read the activity?”', kind:'say', say:'Alexander, can you read the activity?', audio:'Alexander_2_wrong.mp3',
+        title:'Wrong choice — you lost a life',
+        why:'You didn’t turn on <b>Lead the group</b>. Since this is his first lesson, Alexander may be somewhere else on the platform, not looking at the activity you’re presenting — he may only be seeing your camera.' }
+    ] }
+];
+let qIndex = 0;
+
+function gameClick(action, arg, key){
+  // While a decision is open, the real Lead the group switch counts as choosing that option
+  if ($('#qp').style.display === 'block' && !S.busy && action === 'toggleLead'){
+    const i = QUESTIONS[qIndex].options.findIndex(o => o.kind === 'do');
+    if (i >= 0) choose(i);
+    return;
+  }
+  if (action === 'deco' || S.busy) return;
+  if ($('#qp').style.display === 'block'){ toast('Make your decision in the panel 👇'); return; }
+}
+
+function showQuestion(){
+  const Q = QUESTIONS[qIndex];
+  S.busy = false;
+  const qp = $('#qp');
+  qp.className = '';
+  qp.innerHTML = `<div class="qp-head"><span>${Q.tag}</span><span>${Q.who}</span></div>
+    <p class="qp-q">${Q.q}</p>
+    ${Q.options.map((o,i) => `<button class="qp-opt ${S.tried.includes(i) ? 'tried' : ''}" data-opt="${i}"><span class="k">${'ABC'[i]}</span><span>${o.label}</span></button>`).join('')}`;
+  qp.style.display = 'block';
+  qp.querySelectorAll('.qp-opt').forEach(b => b.onclick = () => choose(+b.dataset.opt));
+  placeOverlays();
+}
+
+function choose(i){
+  if (S.busy) return;
+  S.busy = true;
+  const Q = QUESTIONS[qIndex], o = Q.options[i];
+  $('#qp').classList.add('busy');
+
+  if (o.kind === 'do'){
+    // The tutor performs the action in the interface first
+    S.rooms[Q.room].lead = true; S.following = true;
+    render();
+    const lt = $('#leadToggle'); if (lt) lt.classList.add('flash');
+    setTimeout(() => correct(o), 1300);
+  } else {
+    // The tutor says the line, then the student answers (audio), then feedback
+    caption(`<span class="who">You:</span> “${o.say}”`);
+    setTimeout(() => {
+      S.speaking = Q.room; render();
+      caption(`<span class="eq"><i></i><i></i><i></i><i></i></span><span class="who">${S.rooms[Q.room].name}</span> is answering…`);
+      playAudio(AUDIO + o.audio, () => {
+        S.speaking = null; render(); caption(null);
+        wrong(i, o);
+      });
+    }, 1900);
+  }
+}
+
+function playAudio(src, done){
+  const a = new Audio(src);
+  let fin = false;
+  const f = () => { if (fin) return; fin = true; done(); };
+  a.onended = () => setTimeout(f, 400);
+  a.onerror = () => setTimeout(f, 1500);
+  a.play().catch(() => setTimeout(f, 2500));
+  setTimeout(f, 25000);
+}
+
+function wrong(i, o){
+  S.lives--;
+  S.tried.push(i);
+  render();
+  const h = $('#heart-' + S.lives); if (h){ h.classList.add('breaking'); }
+  $('#qp').style.display = 'none';
+  if (S.lives <= 0){
+    modal(`<div class="m-card bad">
+      <div class="m-icon">💔</div><h2>Game over</h2>
+      <p>${o.why}</p>
+      <p>You’ve lost your 3 lives, so you’ll start the simulation again from the beginning — guided tour included.</p>
+      <div class="m-lives">🖤🖤🖤</div>
+      <div class="btns"><button class="btn-y" id="mRestart">Restart simulation</button></div></div>`);
+    $('#mRestart').onclick = restart;
+  } else {
+    modal(`<div class="m-card bad">
+      <div class="m-icon">❌</div><h2>${o.title}</h2>
+      <p>${o.why}</p>
+      <div class="m-lives">${'❤️'.repeat(S.lives)}${'🖤'.repeat(3 - S.lives)}</div>
+      <p style="font-size:13px;color:#7a8094">${S.lives} ${S.lives === 1 ? 'life' : 'lives'} left</p>
+      <div class="btns"><button class="btn-y" id="mRetry">Try again</button></div></div>`);
+    $('#mRetry').onclick = () => { closeModal(); showQuestion(); };
+  }
+}
+
+function correct(o){
+  S.diamonds++;
+  render();
+  const d = $('#dia'); if (d) d.classList.add('dia-pop');
+  $('#qp').style.display = 'none';
+  modal(`<div class="m-card good">
+    <div class="m-icon">💎</div><h2>${o.title}</h2>
+    <p>${o.why}</p>
+    <div class="btns"><button class="btn-y" id="mCont">Continue</button></div></div>`);
+  $('#mCont').onclick = () => {
+    qIndex++;
+    S.tried = [];
+    if (qIndex < QUESTIONS.length){ closeModal(); showQuestion(); }
+    else finish();
+  };
+}
+
+function finish(){
+  S.phase = 'done';
+  render();
+  modal(`<div class="m-card info">
+    <div class="m-icon">🏁</div><h2>Scenario complete!</h2>
+    <p>You reached the end of the first part of the simulation.</p>
+    <div class="m-lives">${'❤️'.repeat(S.lives)}${'🖤'.repeat(3 - S.lives)} &nbsp; 💎 ${S.diamonds}</div>
+    <p>More situations from the parallel lesson are coming soon.</p>
+    <div class="btns"><button class="btn-p" id="mAgain">Play again</button></div></div>`);
+  $('#mAgain').onclick = restart;
+}
+
+function restart(){
+  closeModal(); caption(null);
+  $('#qp').style.display = 'none';
+  qIndex = 0;
+  S = freshState();
+  render();
+  showIntro();
+}
+
+/* =========================================================
+   OVERLAYS
+   ========================================================= */
+function placeOverlays(){
+  renderCoach();
+  const qp = $('#qp');
+  if (qp.style.display === 'block'){
+    const kl = $('.kl');
+    const w = qp.offsetWidth;
+    if (kl){ const r = kl.getBoundingClientRect(); qp.style.left = (r.left + (r.width - w)/2) + 'px'; qp.style.top = (r.top + 74) + 'px'; }
+    else { qp.style.left = ((innerWidth - w)/2) + 'px'; qp.style.top = '90px'; }
+  }
+}
+function modal(html){ const m = $('#modal'); m.innerHTML = html; m.style.display = 'flex'; }
+function closeModal(){ const m = $('#modal'); m.style.display = 'none'; m.innerHTML = ''; }
+function caption(html){ const c = $('#caption'); if (!html){ c.style.display = 'none'; return; } c.innerHTML = html; c.style.display = 'flex'; }
+let toastT;
+function toast(msg){ const t = $('#toast'); t.textContent = msg; t.style.display = 'block'; clearTimeout(toastT); toastT = setTimeout(() => t.style.display = 'none', 2600); }
+
+window.addEventListener('resize', placeOverlays);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(placeOverlays);
+document.addEventListener('scroll', () => { if (S.phase === 'guide') renderCoach(); }, true);
+
+/* =========================================================
+   INTRO / PLAYER GUIDE
+   ========================================================= */
+function showIntro(){
+  const el = $('#intro');
+  el.innerHTML = `<div class="intro-wrap">
+    <span class="intro-kicker">Parallel lessons · Tutor training</span>
+    <h1>Classroom <span>Simulator</span></h1>
+    <p class="lead-p">In this game you’ll live through real situations from a lesson in Classroom. You are the tutor of a parallel group of <b>4 students</b>, and a new student joins the lesson <b>every 10 minutes</b>.</p>
+    <div class="facts">
+      <div class="fact"><div class="fi">👥</div><b>4 students</b><span>Each one has their own room in your Classroom console.</span></div>
+      <div class="fact"><div class="fi">⏱️</div><b>Every 10 minutes</b><span>A new student arrives, so you have 10 minutes to introduce the lesson.</span></div>
+      <div class="fact"><div class="fi">❤️❤️❤️</div><b>3 lives</b><span>A wrong decision costs one life. Lose all 3 and you start again from the beginning.</span></div>
+      <div class="fact"><div class="fi">💎</div><b>Diamonds</b><span>Earn one for every correct decision.</span></div>
+    </div>
+    <div class="phases">
+      <div class="phase"><div class="pn">Part 1</div><b>Guided tour</b><span>A step-by-step tour of a real Classroom lesson with your first student, so you get familiar with how the lesson flows.</span></div>
+      <div class="phase"><div class="pn">Part 2</div><b>Decision game</b><span>Choose what to do in each situation. Correct decisions move you forward; wrong ones cost you a life.</span></div>
+    </div>
+    <button class="btn-y" id="startBtn">Start the guided tour →</button>
+  </div>`;
+  el.style.display = 'block';
+  $('#startBtn').onclick = startGuide;
+}
+
+S = freshState();
+render();
+showIntro();
+</script>
+</body>
+</html>
