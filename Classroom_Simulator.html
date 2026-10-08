@@ -192,9 +192,54 @@ svg{display:block}
 .btn-y{background:var(--coach);color:#2a2410;border-radius:12px;padding:13px 26px;font-weight:700;font-size:15px}
 .btn-y:hover{filter:brightness(1.05)}
 
-#qp{position:fixed;z-index:800;width:560px;background:#fff;color:#1f2433;border-radius:18px;padding:20px 22px;box-shadow:0 20px 60px rgba(0,0,0,.5);display:none;border-top:6px solid var(--coach);animation:fadeIn .35s}
-#qp.busy{opacity:.55;pointer-events:none}
-.qp-head{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#a07a00}
+#qp{position:fixed;z-index:800;right:12px;top:66px;width:430px;max-height:calc(100vh - 150px);overflow-y:auto;background:#fff;color:#1f2433;border-radius:18px;padding:18px 20px;box-shadow:0 20px 60px rgba(0,0,0,.5);display:none;border-top:6px solid var(--coach);animation:fadeIn .35s}
+#qp.busy{opacity:.6;pointer-events:none}
+#qp.mini .qp-body{display:none}
+#qp.mini{width:300px}
+.qp-head{display:flex;gap:10px;align-items:center;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#a07a00}
+.qp-head span+span{margin-left:auto}
+.qp-min{width:26px;height:26px;border-radius:7px;background:#f1f3f8;color:#3a4260;font-size:18px;line-height:1;font-weight:700}
+.qp-min:hover{background:#e3e7f0}
+.qp-body .btn-y{margin-top:4px}
+.qp-lock{background:#fff4c7;color:#6b5000;border-radius:10px;padding:10px 12px;font-size:13.5px;margin:0 0 6px}
+.qp-opt.locked{opacity:.45;cursor:not-allowed}
+.qp-replay{margin-top:8px;font-size:13px;font-weight:600;color:#3a4260;border:1px solid #d5d9e5;border-radius:8px;padding:7px 12px}
+.qp-replay:hover{background:#f1f3f8}
+.qp-open .console{padding-right:456px}
+.qp-room #qp{right:256px;width:400px}
+.qp-room .notes-tab{right:656px}
+
+/* raised hands, chat notifications, screen share, notes */
+.room-box.hand{border-color:#f5a623}
+.hand-ico{font-size:13px;margin-left:2px}
+.chat-pop{position:absolute;left:8px;bottom:10px;width:min(250px,calc(100% - 16px));background:#3a4160;border-radius:10px;padding:10px 12px;z-index:6;box-shadow:0 8px 22px rgba(0,0,0,.45);animation:fadeIn .3s;cursor:default}
+.cp-head{display:flex;gap:10px;align-items:center}
+.cp-av{flex:0 0 30px;height:30px;border-radius:50%;background:var(--blue);display:grid;place-items:center;font-size:11px;font-weight:700;color:#fff}
+.cp-head b{display:block;font-size:13px}
+.cp-head small{font-size:11px;color:#a3a9bd}
+.cp-x{margin-left:auto;font-size:20px;line-height:1;color:#c8cde0}
+.chat-pop p{margin:8px 0 0;font-size:14px}
+.share{flex:1;min-width:0;background:#000;border-radius:10px;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.share video{width:100%;height:100%;object-fit:contain;display:block;pointer-events:none;background:#000}
+.share-close{position:absolute;top:44px;left:12px;background:#2f3447;color:#e8eaf1;font-size:12px;border-radius:6px;padding:6px 10px;z-index:2}
+.share-wait{color:#a3a9bd;font-size:15px}
+.notes-tab{position:fixed;right:446px;top:42%;z-index:870;background:var(--coach);color:#2a2410;font-weight:700;font-size:14px;border-radius:12px 0 0 12px;padding:16px 10px;writing-mode:vertical-rl;transform:rotate(180deg);box-shadow:0 6px 20px rgba(0,0,0,.4);animation:tabPulse 1.6s infinite}
+.notes-tab.seen{animation:none}
+@keyframes tabPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,211,77,.7)}50%{box-shadow:0 0 0 10px rgba(255,211,77,0)}}
+.notes-card{width:auto;max-width:92vw;padding:20px 22px 18px;background:#fbf6ee}
+.notes-card img{display:block;max-height:68vh;max-width:100%;margin:0 auto;border-radius:6px}
+.rate{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0}
+.rate span{border:1px solid #c5c8d3;border-radius:10px;padding:9px 14px}
+.rate span.on{background:var(--blue);border-color:var(--blue)}
+.shop{background:#fff7d6;border:1px solid #f1d27a;border-radius:14px;padding:12px 16px;margin:14px 0 6px}
+.shop p{margin:2px 0;color:#4a3b00}
+.shop .shop-bal{font-size:13px;color:#7a6420}
+.shop.off{background:#f3f4f8;border-color:#dfe2ea}
+.shop.off p{color:#7a8094}
+.link-btn{font-size:13px;color:#6a7190;text-decoration:underline}
+.m-card .btn-y:disabled{background:#e3e5ec;color:#9aa0b5}
+.btn-y:disabled{background:#4a5170;color:#b9bed0;cursor:not-allowed}
+.phase.locked{opacity:.75}
 .qp-q{font-size:15.5px;line-height:1.55;margin:10px 0 14px;font-weight:500}
 .qp-opt{width:100%;text-align:left;display:flex;gap:12px;align-items:center;border:2px solid #e2e5ee;border-radius:12px;padding:12px 14px;margin:8px 0;font-size:14.5px;color:#1f2433;background:#fafbfd;transition:.15s}
 .qp-opt:hover{border-color:var(--blue);background:#f1f5ff}
@@ -237,7 +282,13 @@ svg{display:block}
 .phase .pn{font-size:12px;font-weight:700;color:var(--lime);letter-spacing:.08em;text-transform:uppercase}
 .phase b{display:block;margin:6px 0;font-size:16px}
 .phase span{color:#b9bed0;font-size:14px;line-height:1.55}
-#toast{position:fixed;top:66px;left:50%;transform:translateX(-50%);z-index:1050;background:#fff;color:#1f2433;font-size:13.5px;font-weight:600;border-radius:999px;padding:9px 18px;box-shadow:0 8px 24px rgba(0,0,0,.35);display:none;animation:fadeIn .25s}
+.phase{display:flex;flex-direction:column;align-items:flex-start}
+.phase .btn-y{margin-top:16px}
+#task{position:fixed;top:66px;left:50%;transform:translateX(-50%);z-index:960;background:#fff;color:#1f2433;border-radius:14px;border-left:6px solid var(--coach);padding:12px 16px;box-shadow:0 12px 36px rgba(0,0,0,.45);display:none;align-items:center;gap:12px;font-size:14.5px;line-height:1.45;width:max-content;max-width:min(680px,92vw);animation:fadeIn .3s}
+#task .t-ico{font-size:20px}
+#task .t-back{flex:0 0 auto;font-size:13px;font-weight:600;color:#3a4260;border:1px solid #d5d9e5;border-radius:8px;padding:6px 10px}
+#task .t-back:hover{background:#f1f3f8}
+#toast{position:fixed;top:140px;left:50%;transform:translateX(-50%);z-index:990;background:#fff;color:#1f2433;font-size:13.5px;font-weight:600;border-radius:999px;padding:9px 18px;box-shadow:0 8px 24px rgba(0,0,0,.35);display:none;animation:fadeIn .25s}
 @media (max-width:900px){.facts{grid-template-columns:1fr 1fr}.phases{grid-template-columns:1fr}}
 </style>
 </head>
@@ -247,6 +298,7 @@ svg{display:block}
 <div id="coach"></div>
 <div id="qp"></div>
 <div id="caption"></div>
+<div id="task"></div>
 <div id="toast"></div>
 <div id="modal"></div>
 <div id="intro"></div>
@@ -274,7 +326,11 @@ const P = {
   workshopTop: IMG + '7e332ccc-20cc-42fb-b622-e2f975e97ed9.png',
   workshopBottom: IMG + 'e28a4a9c-9045-4aea-ae32-c2d7fc3f0cfc.png',
   flipanim: IMG + 'c2188136-40bc-496d-97de-6dad78899624.png',
-  video: 'https://mp.kodland.org/task_description_materials/5ba2b201-1ba4-4588-a21c-bf8b2a9a3690.mp4'
+  video: 'https://mp.kodland.org/task_description_materials/5ba2b201-1ba4-4588-a21c-bf8b2a9a3690.mp4',
+  sofiaProject: IMG + 'Sofia_Project.mp4',
+  errorVid: IMG + 'Error_project.mp4',
+  winVid: IMG + 'Win_project.mp4',
+  notes: IMG + 'notes.png'
 };
 
 /* =========================================================
@@ -410,6 +466,19 @@ const ACTIVITIES = [
 ['First letter — first version of your project 🖍️','Explore the drawing tools 🎨','Move, rotate and resize 🔄','How can you make the second letter appear later? 🤔','The secret of frame-by-frame animation 🎞️','One more frame, one more letter','Bring the rest of your letters to life 🚀','Check your animation ✅','Save and submit your animation 💾','How does your animation work? 🔍','Mini Animation Premiere! 🎬','What did you discover today? ✨','Get ready to use Canva 🖼️']
   .forEach(t => ACTIVITIES.push({ title:t, html:`<h1>${t}</h1><p class="sim-note">Simulator note: this card isn’t part of the current scenarios yet.</p>` }));
 
+// Cards that appear in the decision game (content taken from the Classroom screenshots)
+ACTIVITIES[6].html = banner(P.capsuleTop) +
+  `<h1>First letter — first version of your project 🖍️</h1>
+   <blockquote><p>Imagine you’re exploring a new creative tool. First, try to work it out on your own — it’s OK to make mistakes here.</p></blockquote>` +
+  media(P.flipanim, '<h3>🎯 Your task</h3>' + ol(['Draw the first letter of your name on the canvas.','Add a colour or one detail that shows something you’re interested in.']));
+ACTIVITIES[17].html =
+  `<h1>What did you discover today? ✨</h1>
+   <h3 id="progress">Think about your progress</h3>
+   <p><strong>Rate your progress!</strong></p>
+   <div class="rate"><span class="on">😁 I made the project by myself</span><span>🤫 The tips in the cards helped me</span><span>🥺 I still need more practice</span></div>
+   <p>Great! In the next lesson, try adding animation to a new video project by yourself.</p>
+   <blockquote><p>Tell your tutor in one sentence: what was the most interesting or surprising part of making your animation?</p></blockquote>`;
+
 /* =========================================================
    STATE
    ========================================================= */
@@ -426,16 +495,22 @@ function freshState(){
     speaking:null,          // room index currently speaking
     following:false,
     busy:false, tried:[],
+    await:null,             // pending "click the real control" task in the game
+    introDone:true,
+    msgs:{},                // chat notifications per room: { text, time }
+    share:null,             // screen share in the Classroom view: { room, src }
+    notesTab:false, notesSeen:false,
     rooms:[
       { name:'Sofia',     photo:P.sofia,     joined:false, mode:'classroom', activity:null, lead:false, scrollTo:null },
       { name:'Alexander', photo:P.alexander, joined:false, mode:'classroom', activity:null, lead:false, scrollTo:null },
-      { name:'Valentina', photo:P.valentina, joined:false, mode:'classroom', activity:null, lead:false, scrollTo:null },
-      { name:'Mateo',     photo:P.mateo,     joined:false, mode:'classroom', activity:null, lead:false, scrollTo:null }
+      { name:'Mateo',     photo:P.mateo,     joined:false, mode:'classroom', activity:null, lead:false, scrollTo:null },
+      { name:'Valentina', photo:P.valentina, joined:false, mode:'classroom', activity:null, lead:false, scrollTo:null }
     ]
   };
 }
 const $ = s => document.querySelector(s);
-const fmtClock = m => m < 0 ? '16:59' : `17:${String(m).padStart(2,'0')}`;
+const fmtClock = m => m < 0 ? '16:59' : `${17 + Math.floor(m / 60)}:${String(m % 60).padStart(2,'0')}`;
+const initials = n => n.slice(0,2).toUpperCase();
 const curRoom = () => S.rooms[S.room];
 
 /* =========================================================
@@ -447,19 +522,35 @@ function teacherTile(extraClass=''){
 function studentTile(i){
   const r = S.rooms[i];
   const follow = (S.following && S.room === i && r.lead) ? `<span class="follow-badge">${I.link} Following the teacher</span>` : '';
-  return `<div class="vt student ${S.speaking === i ? 'speaking' : ''}">${follow}<img src="${r.photo}" alt="${r.name}"><span class="lbl">${r.name} ${BARS}</span><button class="dots" data-action="deco">⋯</button></div>`;
+  const hand = r.hand ? '<span class="hand-ico">✋</span>' : '';
+  return `<div class="vt student ${S.speaking === i ? 'speaking' : ''}" data-room="${i}">${follow}<img src="${r.photo}" alt="${r.name}"><span class="lbl">${r.name} ${BARS}${hand}</span><button class="dots" data-action="deco">⋯</button></div>`;
+}
+function chatPop(i){
+  const m = S.msgs[i]; if (!m) return '';
+  const n = S.rooms[i].name;
+  return `<div class="chat-pop"><div class="cp-head"><span class="cp-av">${initials(n)}</span><div><b>${n}</b><small>${m.time}</small></div><button class="cp-x" data-action="closeMsg" data-arg="${i}">×</button></div><p>${m.text}</p></div>`;
 }
 function roomBox(i){
   const r = S.rooms[i];
+  const hand = r.joined && r.hand ? '<span class="hand-ico">✋</span>' : '';
   const inner = r.joined
     ? `<div class="minis">
          <div class="mini"><div class="av">T</div><span class="lbl">Tutor (you)</span></div>
-         <div class="mini"><img src="${r.photo}" alt=""><span class="lbl">${r.name} ${BARS}</span></div>
+         <div class="mini"><img src="${r.photo}" alt=""><span class="lbl">${r.name} ${BARS}${hand}</span></div>
        </div>`
     : `<div class="av">T</div><span class="lbl">Tutor (you)</span>`;
-  return `<div class="room-box ${r.joined ? 'joined' : ''}" id="room-${i}" data-action="enterRoom" data-arg="${i}">
-            <div class="room-inner"><span class="tag">${r.name}</span>${r.joined ? '<div style="height:100%;width:100%;padding-top:0">' + inner + '</div>' : inner}</div>
+  return `<div class="room-box ${r.joined ? 'joined' : ''} ${hand ? 'hand' : ''}" id="room-${i}" data-action="enterRoom" data-arg="${i}">
+            <div class="room-inner"><span class="tag">${r.name}${hand}</span>${r.joined ? '<div style="height:100%;width:100%;padding-top:0">' + inner + '</div>' : inner}</div>
+            ${chatPop(i)}
           </div>`;
+}
+function shareStage(){
+  const sh = S.share;
+  // No controls and no pointer events: it should look like a live screen share, not a video player
+  const inner = `<video id="shareVid" data-src="${sh.src}" src="${sh.src}" muted playsinline preload="auto" ${sh.loop ? 'loop autoplay' : ''}
+    disablepictureinpicture controlslist="nodownload nofullscreen noremoteplayback" oncontextmenu="return false"></video>`;
+  return `<div class="stage tasks"><div class="share"><button class="share-close" data-action="deco">Close</button>${inner}</div>
+    <div class="right-col">${teacherTile()}${studentTile(S.room)}</div></div>`;
 }
 function header(){
   const online = S.rooms.filter(r => r.joined).length;
@@ -513,7 +604,9 @@ function roomView(){
   const r = curRoom();
   const others = [0,1,2,3].filter(i => i !== S.room).map(roomBox).join('');
   let stage;
-  if (r.mode === 'tasks' && r.activity !== null){
+  if (S.share && S.share.room === S.room && r.mode === 'classroom'){
+    stage = shareStage();
+  } else if (r.mode === 'tasks' && r.activity !== null){
     const a = ACTIVITIES[r.activity];
     stage = `<div class="stage tasks">
       <div class="kl">
@@ -543,8 +636,11 @@ let lastKey = null;
 function render(){
   const sc = $('#taskScroll'), dd = $('#ddScroll');
   const prevTop = sc ? sc.scrollTop : 0, prevDD = dd ? dd.scrollTop : 0;
+  // Keep the shared-screen video across re-renders so it doesn't restart or lose its last frame
+  const oldVid = $('#shareVid'), vidWasPlaying = oldVid && !oldVid.paused && !oldVid.ended;
   const key = S.view === 'room' ? `${S.room}-${curRoom().activity}-${curRoom().mode}` : 'console';
-  $('#app').innerHTML = header() + (S.view === 'console' ? consoleView() : roomView());
+  const notesTab = S.notesTab && S.phase === 'game' ? `<button class="notes-tab ${S.notesSeen ? 'seen' : ''}" data-action="openNotes">📝 My notes</button>` : '';
+  $('#app').innerHTML = header() + (S.view === 'console' ? consoleView() : roomView()) + notesTab;
   const sc2 = $('#taskScroll');
   if (sc2){
     const r = curRoom();
@@ -554,7 +650,13 @@ function render(){
     sc2.style.scrollBehavior = '';
   }
   const dd2 = $('#ddScroll'); if (dd2) dd2.scrollTop = prevDD;
+  const ph = $('#shareVid');
+  if (oldVid && ph && ph.dataset.src === oldVid.dataset.src){
+    ph.replaceWith(oldVid);
+    if (vidWasPlaying) oldVid.play().catch(() => {});
+  }
   lastKey = key;
+  document.body.classList.toggle('qp-room', S.view === 'room');
   requestAnimationFrame(placeOverlays);
   setTimeout(placeOverlays, 400); // re-check once images/fonts have settled
 }
@@ -590,6 +692,10 @@ document.addEventListener('click', e => {
   if (!el || !$('#app').contains(el)) return;
   const action = el.dataset.action, arg = el.dataset.arg;
   const key = arg !== undefined ? `${action}:${arg}` : action;
+
+  // Always available: dismissing a chat notification and opening the tutor's notes
+  if (action === 'closeMsg'){ e.stopPropagation(); delete S.msgs[arg]; render(); return; }
+  if (action === 'openNotes'){ openNotes(); return; }
 
   if (S.phase === 'guide'){
     const step = GUIDE[S.step];
@@ -641,10 +747,10 @@ const GUIDE = [
     text:'Click <b>Next task</b> to continue.' },
   { title:'Explore the example', clock:7, target:'#btnNext', accept:['nextTask'],
     text:'Look at the example animation together and talk about how it was made. Then click <b>Next task</b>.' },
-  { title:'The last synchronous card', clock:9, target:'#tn-last', next:true, scrollTo:'tn-last',
+  { title:'The last synchronous card', clock:7, target:'#tn-last', next:true, scrollTo:'tn-last',
     text:'Read the Teacher notes: <b>Format: SYNCHRONOUS (end of the introduction)</b>. This is the last card you do together. Keep an eye on the time — you’ll usually get here <b>before</b> the 10 minutes are up.<br><br>Say goodbye for now: confirm that everything is clear, remind Sofia how to raise her hand, and leave her working on her own with the cards.' },
-  { title:'A new student has arrived', clock:10, enter:() => join(1), target:'#room-1', accept:['enterRoom:1'], last:true,
-    text:'It’s 17:10 and <b>Alexander</b> has just joined his room — look at the sidebar.<br><br>This is the end of the guided tour. From now on, the decisions are yours! Click Alexander’s room to go and see him.' }
+  { title:'A new student has arrived', clock:8, enter:() => join(1), target:'#room-1', accept:['enterRoom:1'], last:true,
+    text:'It’s 17:08 and <b>Alexander</b> has just joined his room — look at the sidebar.<br><br>This is the end of the guided tour. From now on, the decisions are yours! Click Alexander’s room to go and see him.' }
 ];
 
 function startGuide(){
@@ -673,7 +779,13 @@ function nudge(){
 
 function renderCoach(){
   const coach = $('#coach'), spot = $('#spot');
-  if (S.phase !== 'guide'){ coach.style.display = 'none'; spot.style.display = 'none'; return; }
+  if (S.phase !== 'guide'){
+    coach.style.display = 'none';
+    const h = S.phase === 'game' && S.await && S.await.showHint && S.await.hint ? document.querySelector(S.await.hint) : null;
+    if (h){ const r = h.getBoundingClientRect(), pad = 6; Object.assign(spot.style, { display:'block', left:(r.left-pad)+'px', top:(r.top-pad)+'px', width:(r.width+pad*2)+'px', height:(r.height+pad*2)+'px' }); }
+    else spot.style.display = 'none';
+    return;
+  }
   const st = GUIDE[S.step];
   coach.innerHTML = `<div class="c-step">Guided tour · ${S.step + 1}/${GUIDE.length}</div><h4>${st.title}</h4><p>${st.text}</p>
     <div class="c-foot">${st.next ? '<span></span><button class="btn-p" id="coachNext">Next →</button>' : '<span class="c-hint">👆 Click the highlighted element</span><span></span>'}</div>`;
@@ -714,51 +826,427 @@ function renderCoach(){
   coach.style.left = x + 'px'; coach.style.top = y + 'px';
 }
 
-function finishGuide(){
-  S.phase = 'game';
-  // Alexander's room as the tutor finds it: he's already on the first activity, Lead the group is OFF
+// Alexander's room as the tutor finds it: he's already on the first activity, Lead the group is OFF
+function setupAlexander(){
   const a = S.rooms[1];
   a.mode = 'tasks'; a.activity = 0; a.lead = false; a.scrollTo = 'space-ready';
+}
+
+// The decision game unlocks once the guided tour has been completed (remembered in this browser)
+const TOUR_KEY = 'crsim_tour_done_v1';
+function tourDone(){ try { return localStorage.getItem(TOUR_KEY) === '1'; } catch(e){ return tourDoneMem; } }
+let tourDoneMem = false;
+function setTourDone(){ tourDoneMem = true; try { localStorage.setItem(TOUR_KEY, '1'); } catch(e){} }
+
+function finishGuide(){
+  S.phase = 'done';
+  qIndex = 0;
+  setTourDone();
+  setupAlexander();
+  render();
+  modal(`<div class="m-card info">
+    <div class="m-icon">🎓</div>
+    <h2>Guided tour complete!</h2>
+    <p>You now know how a parallel lesson flows in Classroom. Ready to put it into practice?</p>
+    <div class="btns"><button class="btn-p" id="mMenu">Back to menu</button><button class="btn-y" id="mGo">Start the decision game →</button></div></div>`);
+  $('#mMenu').onclick = restart;
+  $('#mGo').onclick = () => { closeModal(); S.phase = 'game'; beginDecisions(); };
+}
+
+/* Starts the game straight from the menu, without the guided tour.
+   The lesson is set up as the tour leaves it: Sofia working on her own, Alexander just arrived (17:10). */
+function startGame(){
+  closeModal(); caption(null); hideTask(); hideQP();
+  $('#intro').style.display = 'none';
+  qIndex = 0;
+  S = freshState();
+  S.phase = 'game';
+  S.clock = 8;
+  const sofia = S.rooms[0];
+  sofia.joined = true; sofia.mode = 'tasks'; sofia.activity = 5; sofia.lead = true;
+  S.rooms[1].joined = true;
+  setupAlexander();
+  S.view = 'room'; S.room = 0;
+  render();
+  toast('🔔 Alexander joined the lesson');
+  awaitClick({
+    text:'It’s <b>17:08</b>. Sofia is working on her own and <b>Alexander</b> has just joined the lesson. Go to his room.',
+    accept:['enterRoom:1'], free:['back'], hint:'#room-1',
+    miss:'Not there — Alexander’s room is in the sidebar on the left.',
+    onDone: beginDecisions
+  });
+}
+
+function beginDecisions(){
   render();
   modal(`<div class="m-card info">
     <div class="m-icon">🎮</div>
-    <h2>The decision game begins</h2>
-    <p>You’ve finished the guided tour. Now it’s your turn: in each situation, choose what you would do as the tutor.</p>
-    <p>Correct decisions earn a <b>💎 diamond</b>. A wrong decision costs a <b>❤️ life</b>, but you keep playing. If you lose all 3 lives, you’ll start the simulation again from the beginning.</p>
+    <h2>The decision game</h2>
+    <p>In each situation, decide what you would do as the tutor. Sometimes you choose an answer; sometimes you have to <b>click the right button in Classroom</b> yourself.</p>
+    <p>Correct decisions earn a <b>💎 diamond</b>. A wrong decision costs a <b>❤️ life</b>, but you keep playing. If you lose all 3 lives, you can buy an extra life for <b>💎 3</b> — otherwise the game starts again from the first situation.</p>
     <div class="m-lives">${'❤️'.repeat(S.lives)}</div>
     <div class="btns"><button class="btn-y" id="mGo">Let’s go</button></div></div>`);
-  $('#mGo').onclick = () => { closeModal(); showQuestion(); };
+  $('#mGo').onclick = () => { closeModal(); runQuestion(); };
 }
+
+/* ---------- "Do it in Classroom" tasks: the player must click the real control ---------- */
+function awaitClick(cfg){
+  S.await = Object.assign({ misses:0, showHint:false, free:[] }, cfg);
+  showTask(cfg.text, cfg.back);
+}
+function showTask(html, back){
+  const t = $('#task');
+  t.innerHTML = `<span class="t-ico">👆</span><span><b>Your move:</b> ${html}</span>${back ? '<button class="t-back" id="tBack">← Back to options</button>' : ''}`;
+  t.style.display = 'flex';
+  const b = $('#tBack'); if (b) b.onclick = () => { S.await = null; hideTask(); placeOverlays(); showQuestion(); };
+}
+function hideTask(){ $('#task').style.display = 'none'; }
 
 /* =========================================================
    DECISION GAME
+   Each scene: setup() puts Classroom in the right state, an optional intro
+   plays first (audio / screen share), then the options are shown.
+   Option kinds:  say  = the tutor says a line (optionally the student answers with audio)
+                  pick = a decision, no line
+                  do   = the tutor must click the real control (action / hint / prompt / miss)
    ========================================================= */
+function clearWorld(){
+  S.rooms.forEach(r => { r.hand = false; });
+  S.msgs = {}; S.share = null; S.notesTab = false;
+}
+function at(min){ S.clock = min; }
+function inRoom(i, cfg){ S.view = 'room'; S.room = i; S.dropdown = false; Object.assign(S.rooms[i], cfg || {}); }
+function atConsole(){ S.view = 'console'; S.room = null; S.dropdown = false; }
+function leave(i){ S.rooms[i].joined = false; S.rooms[i].hand = false; }
+
 const QUESTIONS = [
-  { tag:'Decision 1', who:'Alexander · 17:10', room:1,
+  /* 1 — Lead the group */
+  { who:'Alexander · 17:08', room:1, present:[0,1],
     q:'You’re with <b>Alexander</b>, your 17:10 student. He arrived on time — great! You can see he’s already in the activities. What should you do before moving on?',
     options:[
       { label:'Say: “Alexander, can you click <b>Lead the group</b>?”', kind:'say', say:'Alexander, can you click “Lead the group”?', audio:'Alexander_1_wrong.mp3',
-        title:'Wrong choice — you lost a life',
         why:'Students don’t have the <b>Lead the group</b> option in their Classroom, and they’re not the ones who turn it on. Only you, the tutor, can activate it.' },
       { label:'Turn on <b>Lead the group</b>', kind:'do', correct:true,
-        title:'Correct! You earned a diamond',
+        action:'toggleLead', hint:'#leadToggle',
+        prompt:'Turn on <b>Lead the group</b> in Alexander’s Classroom.',
+        miss:'That’s not the right control. Look again at the bottom bar.',
         why:'Well done! With <b>Lead the group</b> on, Alexander’s screen now follows yours: every activity and every scroll you make, he sees at the same time.' },
       { label:'Say: “Alexander, can you read the activity?”', kind:'say', say:'Alexander, can you read the activity?', audio:'Alexander_2_wrong.mp3',
-        title:'Wrong choice — you lost a life',
         why:'You didn’t turn on <b>Lead the group</b>. Since this is his first lesson, Alexander may be somewhere else on the platform, not looking at the activity you’re presenting — he may only be seeing your camera.' }
+    ] },
+
+  /* 2 — Closing the introduction */
+  { who:'Alexander · 17:17', room:1, present:[0,1,2],
+    setup(){
+      clearWorld(); at(17); S.following = true;
+      inRoom(1, { mode:'tasks', activity:5, lead:true, scrollTo:'tn-last' });
+      S.rooms[0].hand = true; S.rooms[2].joined = true;
+    },
+    events:['✋ Sofia raised her hand', '🔔 Mateo joined the lesson'],
+    q:'A student raises their hand for help, and shortly after, the next student joins — and you’re about to finish the introduction with Alexander. Which phrase would you use to end the interaction?',
+    options:[
+      { label:'“I have to go because I need to welcome other students, so from now on you’ll work alone. See you at the end of the lesson.”', kind:'say',
+        say:'I have to go because I need to welcome other students, so from now on you’ll work alone. See you at the end of the lesson.',
+        why:'This may well happen — for example, if the student is doing great on their own — but the phrase isn’t very kind, and it calls independent work “working alone”. That doesn’t help the student see it as another way of learning; it sounds like the tutor is leaving them unattended.' },
+      { label:'“Great, it’s time for your independent work! I trust you’ll do really well — I believe in your skills. Remember that the cards have help for every activity, and you can also raise your hand and I’ll come back to your room to help you. Good luck and have fun!”', kind:'say', correct:true,
+        say:'Great, it’s time for your independent work! I trust you’ll do really well — I believe in your skills. Remember that the cards have help for every activity, and you can also raise your hand and I’ll come back to your room to help you. Good luck and have fun!',
+        why:'This phrase reaffirms independent work, reminds Alexander of the guidance in every card, and lets him know that if he needs help beyond what the cards offer, he can raise his hand.' },
+      { label:'“I’m leaving for a short moment, but I’ll be right back to help you and explain the rest of the activities. I’ll also share my screen to show you how to use the program.”', kind:'say',
+        say:'I’m leaving for a short moment, but I’ll be right back to help you and explain the rest of the activities. I’ll also share my screen to show you how to use the program.',
+        why:'You can’t keep this promise: you have two students waiting for you. Also, in this format the tutor doesn’t explain the activities — the student works through the cards.' }
+    ] },
+
+  /* 3 — Raised hand vs onboarding */
+  { who:'Console · 17:18', present:[0,1,2],
+    setup(){
+      clearWorld(); at(18); atConsole();
+      S.rooms[0].hand = true; S.rooms[2].joined = true;
+    },
+    q:'Perfect — you’ve finished with your second student. Now decide what to do first: should you go to the student who is raising their hand, or to the student who has just arrived on time for their lesson?',
+    options:[
+      { label:'The student raising their hand (Sofia)', kind:'pick', action:'enterRoom:0',
+        why:'Onboarding comes before a raised hand. If you delay Mateo’s onboarding, you also delay the moment he can start working on his activities.' },
+      { label:'The student waiting for their onboarding (Mateo)', kind:'do', correct:true,
+        action:'enterRoom:2', hint:'#room-2',
+        prompt:'Go to <b>Mateo’s</b> room to start his onboarding.',
+        miss:'Not that one — find Mateo’s room in the console.',
+        why:'Onboarding comes before a raised hand: delaying Mateo’s onboarding would delay the time he can start working on his activities.' }
+    ] },
+
+  /* 4 — A student arrives early */
+  { who:'Mateo · 17:22', room:2, present:[0,1,2,3],
+    setup(){
+      clearWorld(); at(22); S.following = true;
+      S.rooms[0].hand = true;
+      inRoom(2, { mode:'tasks', activity:3, lead:true });
+      S.rooms[3].joined = true;
+      S.msgs[3] = { text:'Hi????', time:'17:22' };
+    },
+    events:['🔔 Valentina joined the lesson'],
+    q:'You’re in the middle of Mateo’s onboarding and you notice that <b>Valentina</b>, your fourth student, has arrived early for her lesson. What do you do?',
+    options:[
+      { label:'Keep going until I finish Mateo’s onboarding', kind:'pick', correct:true,
+        why:'Valentina arrived early, so she knows it’s normal for her tutor not to be in the room yet. Finishing Mateo’s onboarding keeps everyone’s lesson on schedule.' },
+      { label:'Go to Valentina’s room so she doesn’t have to wait', kind:'pick', action:'enterRoom:3',
+        why:'This stops Mateo’s onboarding and delays his lesson, which is counterproductive for everyone. Valentina arrived early, so it’s normal for her tutor not to be in the room yet.' },
+      { label:'Say: “Mateo, wait a moment — a classmate has just joined the lesson.”', kind:'say',
+        say:'Mateo, wait a moment — a classmate has just joined the lesson.',
+        why:'This stops Mateo’s onboarding and delays his lesson, which is counterproductive for everyone. Valentina arrived early, so it’s normal for her tutor not to be in the room yet.' }
+    ] },
+
+  /* 5 — Two spare minutes */
+  { who:'Console · 17:28', present:[0,1,2,3],
+    setup(){
+      clearWorld(); at(28); atConsole();
+      S.rooms[0].hand = true;
+      S.msgs[0] = { text:'Look at my project!!!', time:'17:28' };
+    },
+    events:['💬 New message from Sofia'],
+    q:'You’ve finished Mateo’s onboarding with 2 minutes left of the 10 you spend on an onboarding. Valentina has already arrived, but you remember that Sofia raised her hand — and now she’s sending you a message saying she’s finished her project. What do you do?',
+    options:[
+      { label:'Start with Valentina, because onboarding comes before a raised hand', kind:'pick', action:'enterRoom:3',
+        why:'Valentina’s lesson doesn’t start for another 2 minutes. When you have spare time, use it to connect with the student who needs you most.' },
+      { label:'Go to Sofia and do her offboarding while you’re there', kind:'pick',
+        why:'It’s too early for Sofia’s offboarding: she still has plenty of lesson time left. Right now she needs feedback on her project — and you have 2 minutes to give it.' },
+      { label:'Go to Sofia, using the 2 minutes left before Valentina’s lesson starts, and give her feedback', kind:'pick', correct:true, action:'enterRoom:0',
+        why:'When you have spare time, it’s best to use it to connect with the students who need it most. If nobody has their hand up, you can briefly check in on those who haven’t raised it.' }
+    ] },
+
+  /* 6 — Feedback on Sofia's project */
+  { who:'Sofia · 17:28', room:0, present:[0,1,2,3],
+    setup(){
+      clearWorld(); at(28);
+      inRoom(0, { mode:'classroom' });
+      S.share = { room:0, src:P.sofiaProject, loop:true };
+    },
+    q:'You’re in Sofia’s room and she’s sharing her screen to show you her project. What feedback could you give her in two minutes?',
+    options:[
+      { label:'“What a pretty drawing!”', kind:'say', say:'What a pretty drawing!',
+        why:'It’s kind, but it isn’t feedback: it’s too simple and doesn’t tell Sofia what she did well or what she could do next.' },
+      { label:'“Wow, Sofia, I’m impressed — you did all of this by yourself! Even though you went for a nature theme instead of the letters, I like how you used shapes, your colour palette works, and you were brave enough to make lots of frames, which is what makes the movement look smoother. What do you have in mind to continue your animation?”', kind:'say', correct:true,
+        say:'Wow, Sofia, I’m impressed — you did all of this by yourself! Even though you went for a nature theme instead of the letters, I like how you used shapes, your colour palette works, and you were brave enough to make lots of frames, which is what makes the movement look smoother. What do you have in mind to continue your animation?',
+        why:'This is constructive feedback: it points out what she did well and, with the question at the end, motivates her to keep exploring on her own.' },
+      { label:'“Sofia, your drawing is nice, but it doesn’t match the lesson topic, which asks you to draw the letters of your name. You can save this one and start another one where you draw the letters.”', kind:'say',
+        say:'Sofia, your drawing is nice, but it doesn’t match the lesson topic, which asks you to draw the letters of your name. You can save this one and start another one where you draw the letters.',
+        why:'This answer isn’t flexible and focuses on the mistakes. Flexibility is important to keep students motivated — and it offers no real feedback on what she did well.' }
+    ] },
+
+  /* 7 — Two raised hands at 17:50 (check the notes) */
+  { who:'Console · 17:50', requireNotes:true, present:[0,1,2,3],
+    setup(){
+      clearWorld(); at(50); atConsole();
+      S.rooms[0].hand = true; S.rooms[2].hand = true;
+      S.notesTab = true; S.notesSeen = false;
+    },
+    events:['✋ Sofia and Mateo raised their hands'],
+    q:'You’ve finished giving Sofia feedback and Valentina’s onboarding, and it’s now <b>17:50</b>. You’re outside the rooms and two hands are raised: Sofia’s and Mateo’s. Who would you go to first? Before you answer, check your notes.',
+    options:[
+      { label:'Mateo, since you’re free from onboardings and he has a question', kind:'pick', action:'enterRoom:2',
+        why:'Offboarding (closing) comes before a raised hand. Going to Mateo first would delay Sofia’s closing and the whole flow of the lesson. Your notes show it: Sofia is your first goodbye.' },
+      { label:'Sofia, since her lesson is about to end', kind:'do', correct:true,
+        action:'enterRoom:0', hint:'#room-0',
+        prompt:'Go to <b>Sofia’s</b> room to start her goodbye.',
+        miss:'Not that one — find Sofia’s room in the console.',
+        why:'Offboarding (closing) comes before a raised hand. Tip: try to finish the closing in about 8 minutes, so you can still help Mateo with his raised hand before Alexander’s offboarding at 18:00.' },
+      { label:'Mateo, since you haven’t checked on him yet', kind:'pick',
+        why:'Offboarding (closing) comes before a raised hand. Going to Mateo first would delay Sofia’s closing and the whole flow of the lesson. Your notes show it: Sofia is your first goodbye.' }
+    ] },
+
+  /* 8 — Alexander's reflection */
+  { who:'Alexander · 18:00', room:1, present:[1,2,3],
+    setup(){
+      clearWorld(); at(60); S.following = true;
+      leave(0);
+      inRoom(1, { mode:'tasks', activity:17, lead:true, scrollTo:'progress' });
+    },
+    intro:{
+      text:'You’ve said goodbye to Sofia and helped Mateo with his questions. You’re finishing Alexander’s goodbye, and there’s a question about his progress. Let’s hear what Alexander has to say.',
+      btn:'▶ Listen to Alexander', replay:'Listen again',
+      run(done){ speak(1, 'Alexander_reflection.mp3', 'Hmm… It was pretty easy for me because I had used these tools before. I did everything by myself, but I didn’t really learn anything new because I already knew how to use them.', done); }
+    },
+    q:'What would you say to Alexander?',
+    options:[
+      { label:'“I see — but at least you had fun doing something you enjoy.”', kind:'say',
+        say:'I see — but at least you had fun doing something you enjoy.',
+        why:'This doesn’t respond to what Alexander told you: the lesson was too easy for him. If you don’t raise the level, he may get bored.' },
+      { label:'“It’s great that you already know some of this — that gives you an advantage. It’s the first lesson, so it’s normal for it to feel easy. Tell me what kind of challenges you’d like to see or learn, and I’ll keep them in mind as extra activities for the next lesson.”', kind:'say', correct:true,
+        say:'It’s great that you already know some of this — that gives you an advantage. It’s the first lesson, so it’s normal for it to feel easy. Tell me what kind of challenges you’d like to see or learn, and I’ll keep them in mind as extra activities for the next lesson.',
+        why:'You recognise what he already knows, and you also take into account that you need to raise the level so he doesn’t get bored — so you try to get to know him better and adapt the lesson to him.' },
+      { label:'“When that happens, you could help me with your classmates who find everything a bit harder.”', kind:'say',
+        say:'When that happens, you could help me with your classmates who find everything a bit harder.',
+        why:'This doesn’t solve Alexander’s situation: he needs a bigger challenge for himself. Helping classmates isn’t his role in a parallel lesson.' }
+    ] },
+
+  /* 9 — One spare minute and a technical problem */
+  { who:'Console · 18:07', present:[2,3],
+    setup(){
+      clearWorld(); at(67); atConsole();
+      leave(0); leave(1);
+      S.rooms[3].hand = true;
+      S.msgs[3] = { text:'Help! I don’t know how to continue 😟', time:'18:07' };
+    },
+    events:['💬 New message from Valentina'],
+    preload:[ 'errorVid' ],
+    q:'You’ve finished Alexander’s goodbye. You know the next goodbye is Mateo’s, but you have one minute to spare, and you notice that Valentina has written to say she has a technical problem. What should you do?',
+    options:[
+      { label:'Go on to Mateo, because a goodbye comes before a raised hand', kind:'pick', action:'enterRoom:2',
+        why:'It’s true that a goodbye comes before a raised hand, but you still have a minute — enough time to find out what Valentina’s problem is.' },
+      { label:'Help Valentina, because a technical problem is more urgent', kind:'pick',
+        why:'A technical problem may be urgent, but you don’t know what it is yet: it could be very easy, or so complicated that you should go back to Mateo first.' },
+      { label:'Use that minute to check on Valentina and see whether it can be solved in that time', kind:'do', correct:true,
+        action:'enterRoom:3', hint:'#room-3',
+        prompt:'Go to <b>Valentina’s</b> room.',
+        miss:'Not that one — find Valentina’s room in the console.',
+        why:'You have little time, and you don’t need to solve everything — but you can use that minute to see her and understand the problem. If it’s easy, you can fix it. If it’s more complex, tell her you need to say goodbye to a classmate and that you’ll come back, and give her an activity to work on while you’re with Mateo.' }
+    ] },
+
+  /* 10 — Valentina's screen */
+  { who:'Valentina · 18:07', room:3, present:[2,3],
+    setup(){
+      clearWorld(); at(67);
+      leave(0); leave(1);
+      inRoom(3, { mode:'classroom' });
+      S.share = { room:3, src:P.errorVid };
+    },
+    preload:[ 'winVid' ],
+    intro:{
+      text:'You’re in Valentina’s room. Let’s take 30 seconds to see what her problem is.',
+      btn:'▶ Watch Valentina’s screen', replay:'Watch again',
+      run(done){
+        let pending = 2; const fin = () => { if (--pending === 0) done(); };
+        playShare(P.errorVid, () => speak(3, 'Valentina_wrong.mp3', null, fin), fin);
+      }
+    },
+    q:'What should you do?',
+    options:[
+      { label:'Tell Valentina it’s a very complex problem and it’s better to fix it once you’ve finished Mateo’s goodbye', kind:'say',
+        say:'Valentina, this is a very complex problem — it’s better if we fix it once I’ve finished saying goodbye to Mateo.',
+        why:'You didn’t need to postpone it: the problem was very simple. A gap in the outline of the V made the paint fill the whole canvas — you could solve it in a few seconds.' },
+      { label:'Tell her she just needs to close the letter V, because there’s a gap that makes everything get painted', kind:'say', correct:true,
+        say:'You just need to close the letter V — there’s a small gap, and that’s why everything gets painted.',
+        post(done){
+          // Valentina fixes the V on screen first, then thanks the tutor once the video has finished
+          playShare(P.winVid, null, () => speak(3, 'Valentina_corrected.mp3', null, done));
+        },
+        why:'The problem was very simple: a gap in the outline of the V made the paint fill the whole canvas. Taking that minute to look let you solve it on the spot.' },
+      { label:'Tell her to look in the cards for help, because you don’t have time to explain', kind:'say',
+        say:'Look in the cards for help — I don’t have time to explain right now.',
+        why:'The cards can’t spot this kind of issue for her, and the fix only takes a few seconds. Sending her to the cards leaves her stuck.' }
     ] }
 ];
 let qIndex = 0;
+const LIFE_COST = 3;   // diamonds needed to buy a life when the player runs out
+
+/* ---------- Media helpers ---------- */
+function setSpeaking(i){
+  S.speaking = i;
+  document.querySelectorAll('.vt.student').forEach(el => el.classList.toggle('speaking', i !== null && el.dataset.room === String(i)));
+}
+// A student talks: speaking ring + caption (with transcript if given) while the audio plays
+function speak(i, file, transcript, done){
+  setSpeaking(i);
+  caption(`<span class="eq"><i></i><i></i><i></i><i></i></span><span><span class="who">${S.rooms[i].name}</span>${transcript ? ': “' + transcript + '”' : ' is speaking…'}</span>`);
+  playAudio(AUDIO + file, () => { setSpeaking(null); caption(null); done(); });
+}
+// Builds a shared-screen <video>: no controls and no pointer events, so it reads as a live screen share
+function makeShareVideo(src){
+  const v = document.createElement('video');
+  v.muted = true; v.playsInline = true; v.preload = 'auto';
+  v.disablePictureInPicture = true;
+  v.setAttribute('controlslist', 'nodownload nofullscreen noremoteplayback');
+  v.oncontextmenu = () => false;
+  v.src = src; v.dataset.src = src;
+  return v;
+}
+// Videos loaded in the background ahead of time, so they start instantly when swapped in
+const preloaded = {};
+function preloadAsset(key){ const src = P[key]; if (!preloaded[src]){ const v = makeShareVideo(src); v.load(); preloaded[src] = v; } }
+
+// Plays the shared-screen video once from the start; when it ends it stays on its last frame
+function playShare(src, onStart, onEnd){
+  let v = $('#shareVid');
+  if (!v){ onStart && onStart(); onEnd && onEnd(); return; }
+  S.share.src = src;
+  if (v.dataset.src !== src){
+    const nv = preloaded[src] || makeShareVideo(src);
+    delete preloaded[src];
+    nv.id = 'shareVid';
+    v.replaceWith(nv);
+    v = nv;
+  }
+  v.loop = false;
+  let started = false, ended = false, guard = null;
+  const end = () => {
+    if (ended) return; ended = true; clearTimeout(guard);
+    // If the video stalled before its natural end, jump to its last frame
+    if (!v.ended && v.duration){ v.pause(); try { v.currentTime = Math.max(0, v.duration - 0.05); } catch(e){} }
+    start(); onEnd && onEnd();
+  };
+  const start = () => {
+    if (started) return; started = true;
+    // Safety net: carry on even if the 'ended' event never arrives (e.g. a stalled video)
+    guard = setTimeout(end, v.duration ? (v.duration - v.currentTime) * 1000 + 2000 : 20000);
+    onStart && onStart();
+  };
+  v.onplaying = start;
+  v.onended = end;
+  v.onerror = () => setTimeout(end, 1500);
+  setTimeout(start, 6000);   // still not playing after 6 s: don't leave the player waiting
+  try { v.currentTime = 0; } catch(e){}
+  v.play().catch(() => setTimeout(end, 1500));
+}
+
+/* ---------- Flow ---------- */
+function runQuestion(){
+  const Q = QUESTIONS[qIndex];
+  S.tried = []; S.busy = false; S.await = null;
+  S.introDone = !Q.intro;
+  if (Q.present) S.rooms.forEach((r, k) => { r.joined = Q.present.includes(k); });
+  if (Q.setup) Q.setup();
+  render();
+  (Q.events || []).forEach(e => toast(e));
+  (Q.preload || []).forEach(preloadAsset);
+  showQuestion();
+}
 
 function gameClick(action, arg, key){
-  // While a decision is open, the real Lead the group switch counts as choosing that option
-  if ($('#qp').style.display === 'block' && !S.busy && action === 'toggleLead'){
-    const i = QUESTIONS[qIndex].options.findIndex(o => o.kind === 'do');
-    if (i >= 0) choose(i);
+  // Waiting for the player to click a real Classroom control
+  if (S.await){
+    const a = S.await;
+    if (a.accept.includes(key)){
+      S.await = null; hideTask();
+      perform(action, arg);
+      a.onDone();
+      return;
+    }
+    if (a.free.includes(key)){ perform(action, arg); return; }
+    a.misses++;
+    if (a.misses >= 2){ a.showHint = true; toast('Here it is — look at the highlighted control', true); placeOverlays(); }
+    else toast(a.miss, true);
     return;
   }
+  // While a decision is open, clicking the control an option refers to counts as choosing it
+  if (isQPOpen() && !S.busy && S.introDone){
+    const Q = QUESTIONS[qIndex];
+    const i = Q.options.findIndex((o, k) => o.action === key && !S.tried.includes(k));
+    if (i >= 0){
+      const o = Q.options[i];
+      if (Q.requireNotes && !S.notesSeen){ toast('Check your notes first 📝', true); return; }
+      if (o.kind === 'do'){ hideQP(); perform(action, arg); doneDo(o); }
+      else choose(i);
+      return;
+    }
+  }
   if (action === 'deco' || S.busy) return;
-  if ($('#qp').style.display === 'block'){ toast('Make your decision in the panel 👇'); return; }
+  if (isQPOpen()) toast('Make your decision in the panel', true);
+}
+
+function doneDo(o){
+  S.busy = true;
+  if (o.action === 'toggleLead') S.following = true;
+  render();
+  const lt = o.hint && $(o.hint); if (lt) lt.classList.add('flash');
+  setTimeout(() => correct(o), 1300);
 }
 
 function showQuestion(){
@@ -766,48 +1254,83 @@ function showQuestion(){
   S.busy = false;
   const qp = $('#qp');
   qp.className = '';
-  qp.innerHTML = `<div class="qp-head"><span>${Q.tag}</span><span>${Q.who}</span></div>
-    <p class="qp-q">${Q.q}</p>
-    ${Q.options.map((o,i) => `<button class="qp-opt ${S.tried.includes(i) ? 'tried' : ''}" data-opt="${i}"><span class="k">${'ABC'[i]}</span><span>${o.label}</span></button>`).join('')}`;
-  qp.style.display = 'block';
-  qp.querySelectorAll('.qp-opt').forEach(b => b.onclick = () => choose(+b.dataset.opt));
-  placeOverlays();
+  const head = `<div class="qp-head"><span>Decision ${qIndex + 1} of ${QUESTIONS.length}</span><span>${Q.who}</span><button class="qp-min" id="qpMin" title="Hide / show">–</button></div>`;
+
+  if (!S.introDone){
+    qp.innerHTML = head + `<div class="qp-body"><p class="qp-q">${Q.intro.text}</p><button class="btn-y" id="introBtn">${Q.intro.btn}</button></div>`;
+    showQP();
+    $('#introBtn').onclick = () => {
+      S.busy = true; qp.classList.add('busy', 'mini');
+      Q.intro.run(() => { S.introDone = true; showQuestion(); });
+    };
+  } else {
+    const locked = Q.requireNotes && !S.notesSeen;
+    qp.innerHTML = head + `<div class="qp-body">
+      <p class="qp-q">${Q.q}</p>
+      ${locked ? '<p class="qp-lock">📝 Open <b>My notes</b> (the yellow tab) before you answer.</p>' : ''}
+      ${Q.options.map((o,i) => `<button class="qp-opt ${S.tried.includes(i) ? 'tried' : ''} ${locked ? 'locked' : ''}" data-opt="${i}"><span class="k">${'ABC'[i]}</span><span>${o.label}</span></button>`).join('')}
+      ${Q.intro && Q.intro.replay ? `<button class="qp-replay" id="replayBtn">🔁 ${Q.intro.replay}</button>` : ''}</div>`;
+    showQP();
+    qp.querySelectorAll('.qp-opt').forEach(b => b.onclick = () => choose(+b.dataset.opt));
+    const rb = $('#replayBtn');
+    if (rb) rb.onclick = () => { S.busy = true; qp.classList.add('busy', 'mini'); Q.intro.run(() => showQuestion()); };
+  }
+  $('#qpMin').onclick = () => qp.classList.toggle('mini');
 }
 
 function choose(i){
   if (S.busy) return;
-  S.busy = true;
   const Q = QUESTIONS[qIndex], o = Q.options[i];
-  $('#qp').classList.add('busy');
+  if (Q.requireNotes && !S.notesSeen){ toast('Check your notes first 📝', true); return; }
 
   if (o.kind === 'do'){
-    // The tutor performs the action in the interface first
-    S.rooms[Q.room].lead = true; S.following = true;
-    render();
-    const lt = $('#leadToggle'); if (lt) lt.classList.add('flash');
-    setTimeout(() => correct(o), 1300);
-  } else {
-    // The tutor says the line, then the student answers (audio), then feedback
-    caption(`<span class="who">You:</span> “${o.say}”`);
-    setTimeout(() => {
-      S.speaking = Q.room; render();
-      caption(`<span class="eq"><i></i><i></i><i></i><i></i></span><span class="who">${S.rooms[Q.room].name}</span> is answering…`);
-      playAudio(AUDIO + o.audio, () => {
-        S.speaking = null; render(); caption(null);
-        wrong(i, o);
-      });
-    }, 1900);
+    // The tutor has to find and click the real control in Classroom
+    hideQP();
+    awaitClick({ text:o.prompt, accept:[o.action], hint:o.hint, miss:o.miss, back:true, onDone:() => doneDo(o) });
+    return;
   }
+  S.busy = true;
+  $('#qp').classList.add('busy');
+  const resolve = () => {
+    if (!o.correct) return wrong(i, o);
+    if (!o.post) return correct(o);
+    $('#qp').classList.add('mini');   // keep the shared screen visible while the student acts
+    o.post(() => correct(o));
+  };
+  if (o.kind === 'pick'){ setTimeout(resolve, 250); return; }
+
+  // say: the tutor says the line first, then the student may answer (audio), then feedback
+  tutorSay(o.say, `Tutor_D${qIndex + 1}_${'ABC'[i]}.mp3`, () => {
+    if (o.audio) speak(Q.room, o.audio, null, resolve);
+    else resolve();
+  });
 }
 
-function playAudio(src, done){
+// The tutor's recorded voice (Audios/Tutor_D<decision>_<letter>.mp3) with the line on screen.
+// If the recording is missing, the line stays on screen for its reading time instead.
+function tutorSay(text, file, done){
+  const readMs = Math.min(9000, 1600 + text.length * 35);
+  const tile = document.querySelector('.vt.teacher');
+  if (tile) tile.classList.add('speaking');
+  caption(`<span class="eq"><i></i><i></i><i></i><i></i></span><span><span class="who">You:</span> “${text}”</span>`);
+  playAudio(AUDIO + file, () => {
+    const t = document.querySelector('.vt.teacher'); if (t) t.classList.remove('speaking');
+    caption(null);
+    done();
+  }, readMs);
+}
+
+function playAudio(src, done, fallbackMs){
   const a = new Audio(src);
   let fin = false;
   const f = () => { if (fin) return; fin = true; done(); };
+  const fb = fallbackMs || 1500;
   a.onended = () => setTimeout(f, 400);
-  a.onerror = () => setTimeout(f, 1500);
-  a.play().catch(() => setTimeout(f, 2500));
-  setTimeout(f, 25000);
+  // Safety net: continue after the clip's length even if 'ended' never fires
+  a.onloadedmetadata = () => { if (isFinite(a.duration)) setTimeout(f, a.duration * 1000 + 1500); };
+  a.onerror = () => setTimeout(f, fb);
+  a.play().catch(() => setTimeout(f, Math.max(fb, 2500)));
+  setTimeout(f, 60000);
 }
 
 function wrong(i, o){
@@ -815,18 +1338,33 @@ function wrong(i, o){
   S.tried.push(i);
   render();
   const h = $('#heart-' + S.lives); if (h){ h.classList.add('breaking'); }
-  $('#qp').style.display = 'none';
+  hideQP();
   if (S.lives <= 0){
+    // Out of lives: a life can be bought for LIFE_COST diamonds to keep playing from this situation
+    const canBuy = S.diamonds >= LIFE_COST;
     modal(`<div class="m-card bad">
-      <div class="m-icon">💔</div><h2>Game over</h2>
+      <div class="m-icon">💔</div><h2>You’re out of lives</h2>
       <p>${o.why}</p>
-      <p>You’ve lost your 3 lives, so you’ll start the simulation again from the beginning — guided tour included.</p>
       <div class="m-lives">🖤🖤🖤</div>
-      <div class="btns"><button class="btn-y" id="mRestart">Restart simulation</button></div></div>`);
-    $('#mRestart').onclick = restart;
+      <div class="shop ${canBuy ? '' : 'off'}">
+        <p><b>Buy an extra life for 💎 ${LIFE_COST}</b> and continue from this situation.</p>
+        <p class="shop-bal">You have 💎 ${S.diamonds}${canBuy ? '' : ` — you need ${LIFE_COST - S.diamonds} more`}</p>
+      </div>
+      <p>Otherwise, the game starts again from the first situation.</p>
+      <div class="btns"><button class="btn-p" id="mRestart">Restart the game</button><button class="btn-y" id="mBuy" ${canBuy ? '' : 'disabled'}>❤️ Buy a life · 💎 ${LIFE_COST}</button></div>
+      <p><button class="link-btn" id="mMenu">Back to menu</button></p></div>`);
+    $('#mRestart').onclick = startGame;
+    $('#mMenu').onclick = restart;
+    if (canBuy) $('#mBuy').onclick = () => {
+      S.diamonds -= LIFE_COST; S.lives = 1;
+      render();
+      const hh = $('#heart-0'); if (hh) hh.classList.add('dia-pop');
+      closeModal(); showQuestion();
+      toast(`❤️ Life bought — 💎 ${S.diamonds} left`, true);
+    };
   } else {
     modal(`<div class="m-card bad">
-      <div class="m-icon">❌</div><h2>${o.title}</h2>
+      <div class="m-icon">❌</div><h2>Wrong choice — you lost a life</h2>
       <p>${o.why}</p>
       <div class="m-lives">${'❤️'.repeat(S.lives)}${'🖤'.repeat(3 - S.lives)}</div>
       <p style="font-size:13px;color:#7a8094">${S.lives} ${S.lives === 1 ? 'life' : 'lives'} left</p>
@@ -839,34 +1377,42 @@ function correct(o){
   S.diamonds++;
   render();
   const d = $('#dia'); if (d) d.classList.add('dia-pop');
-  $('#qp').style.display = 'none';
+  hideQP();
   modal(`<div class="m-card good">
-    <div class="m-icon">💎</div><h2>${o.title}</h2>
+    <div class="m-icon">💎</div><h2>Correct! You earned a diamond</h2>
     <p>${o.why}</p>
     <div class="btns"><button class="btn-y" id="mCont">Continue</button></div></div>`);
   $('#mCont').onclick = () => {
+    closeModal();
     qIndex++;
-    S.tried = [];
-    if (qIndex < QUESTIONS.length){ closeModal(); showQuestion(); }
+    if (qIndex < QUESTIONS.length) runQuestion();
     else finish();
   };
+}
+
+/* ---------- Tutor notes (scene 7) ---------- */
+function openNotes(){
+  modal(`<div class="m-card notes-card">
+    <img src="${P.notes}" alt="Your notes">
+    <div class="btns"><button class="btn-y" id="mNotesBack">← Back to the game</button></div></div>`);
+  $('#mNotesBack').onclick = () => { S.notesSeen = true; closeModal(); render(); if (isQPOpen()) showQuestion(); };
 }
 
 function finish(){
   S.phase = 'done';
   render();
   modal(`<div class="m-card info">
-    <div class="m-icon">🏁</div><h2>Scenario complete!</h2>
-    <p>You reached the end of the first part of the simulation.</p>
-    <div class="m-lives">${'❤️'.repeat(S.lives)}${'🖤'.repeat(3 - S.lives)} &nbsp; 💎 ${S.diamonds}</div>
-    <p>More situations from the parallel lesson are coming soon.</p>
-    <div class="btns"><button class="btn-p" id="mAgain">Play again</button></div></div>`);
-  $('#mAgain').onclick = restart;
+    <div class="m-icon">🏁</div><h2>Simulation complete!</h2>
+    <p>You’ve made it through a full parallel lesson — from the first onboarding to the last goodbye.</p>
+    <div class="m-lives">${'❤️'.repeat(S.lives)}${'🖤'.repeat(3 - S.lives)} &nbsp; 💎 ${S.diamonds} / ${QUESTIONS.length}</div>
+    <div class="btns"><button class="btn-p" id="mMenu">Back to menu</button><button class="btn-y" id="mAgain">Play the game again</button></div></div>`);
+  $('#mAgain').onclick = startGame;
+  $('#mMenu').onclick = restart;
 }
 
+// Back to the start menu
 function restart(){
-  closeModal(); caption(null);
-  $('#qp').style.display = 'none';
+  closeModal(); caption(null); hideTask(); hideQP();
   qIndex = 0;
   S = freshState();
   render();
@@ -876,31 +1422,38 @@ function restart(){
 /* =========================================================
    OVERLAYS
    ========================================================= */
-function placeOverlays(){
-  renderCoach();
-  const qp = $('#qp');
-  if (qp.style.display === 'block'){
-    const kl = $('.kl');
-    const w = qp.offsetWidth;
-    if (kl){ const r = kl.getBoundingClientRect(); qp.style.left = (r.left + (r.width - w)/2) + 'px'; qp.style.top = (r.top + 74) + 'px'; }
-    else { qp.style.left = ((innerWidth - w)/2) + 'px'; qp.style.top = '90px'; }
-  }
-}
+function placeOverlays(){ renderCoach(); }
+// The decision panel is docked on the right; in the console view the rooms make room for it
+function showQP(){ $('#qp').style.display = 'block'; document.body.classList.add('qp-open'); }
+function hideQP(){ $('#qp').style.display = 'none'; document.body.classList.remove('qp-open'); }
+const isQPOpen = () => $('#qp').style.display === 'block';
 function modal(html){ const m = $('#modal'); m.innerHTML = html; m.style.display = 'flex'; }
 function closeModal(){ const m = $('#modal'); m.style.display = 'none'; m.innerHTML = ''; }
 function caption(html){ const c = $('#caption'); if (!html){ c.style.display = 'none'; return; } c.innerHTML = html; c.style.display = 'flex'; }
-let toastT;
-function toast(msg){ const t = $('#toast'); t.textContent = msg; t.style.display = 'block'; clearTimeout(toastT); toastT = setTimeout(() => t.style.display = 'none', 2600); }
+// Toasts queue up (e.g. "hand raised" then "student joined"); now=true replaces whatever is showing
+let toastQ = [], toastT = null;
+function toast(msg, now){
+  if (now){ toastQ = []; clearTimeout(toastT); toastT = null; }
+  toastQ.push(msg);
+  if (!toastT) nextToast();
+}
+function nextToast(){
+  const t = $('#toast'), m = toastQ.shift();
+  if (!m){ t.style.display = 'none'; toastT = null; return; }
+  t.textContent = m; t.style.display = 'block';
+  toastT = setTimeout(nextToast, 2500);
+}
 
 window.addEventListener('resize', placeOverlays);
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(placeOverlays);
-document.addEventListener('scroll', () => { if (S.phase === 'guide') renderCoach(); }, true);
+document.addEventListener('scroll', () => { if (S.phase === 'guide' || S.await) renderCoach(); }, true);
 
 /* =========================================================
    INTRO / PLAYER GUIDE
    ========================================================= */
 function showIntro(){
   const el = $('#intro');
+  const unlocked = tourDone();
   el.innerHTML = `<div class="intro-wrap">
     <span class="intro-kicker">Parallel lessons · Tutor training</span>
     <h1>Classroom <span>Simulator</span></h1>
@@ -908,17 +1461,19 @@ function showIntro(){
     <div class="facts">
       <div class="fact"><div class="fi">👥</div><b>4 students</b><span>Each one has their own room in your Classroom console.</span></div>
       <div class="fact"><div class="fi">⏱️</div><b>Every 10 minutes</b><span>A new student arrives, so you have 10 minutes to introduce the lesson.</span></div>
-      <div class="fact"><div class="fi">❤️❤️❤️</div><b>3 lives</b><span>A wrong decision costs one life. Lose all 3 and you start again from the beginning.</span></div>
-      <div class="fact"><div class="fi">💎</div><b>Diamonds</b><span>Earn one for every correct decision.</span></div>
+      <div class="fact"><div class="fi">❤️❤️❤️</div><b>3 lives</b><span>A wrong decision costs one life. Lose all 3 and the game starts again from the first situation — unless you buy a life.</span></div>
+      <div class="fact"><div class="fi">💎</div><b>Diamonds</b><span>Earn one for every correct decision. Out of lives? Trade 💎 3 for an extra life.</span></div>
     </div>
     <div class="phases">
-      <div class="phase"><div class="pn">Part 1</div><b>Guided tour</b><span>A step-by-step tour of a real Classroom lesson with your first student, so you get familiar with how the lesson flows.</span></div>
-      <div class="phase"><div class="pn">Part 2</div><b>Decision game</b><span>Choose what to do in each situation. Correct decisions move you forward; wrong ones cost you a life.</span></div>
+      <div class="phase"><div class="pn">Part 1 · ${unlocked ? 'Completed ✓' : 'Start here'}</div><b>Guided tour</b><span>A step-by-step tour of a real Classroom lesson with your first student, so you get familiar with how the lesson flows.</span>
+        <button class="btn-y" id="startBtn">${unlocked ? 'Replay the guided tour' : 'Start the guided tour →'}</button></div>
+      <div class="phase ${unlocked ? '' : 'locked'}"><div class="pn">Part 2</div><b>Decision game</b><span>Choose what to do in each situation — or click the right button in Classroom yourself. Correct decisions move you forward; wrong ones cost you a life.</span>
+        <button class="btn-y" id="gameBtn" ${unlocked ? '' : 'disabled'}>${unlocked ? 'Play the decision game →' : '🔒 Complete the guided tour to unlock'}</button></div>
     </div>
-    <button class="btn-y" id="startBtn">Start the guided tour →</button>
   </div>`;
   el.style.display = 'block';
   $('#startBtn').onclick = startGuide;
+  if (unlocked) $('#gameBtn').onclick = startGame;
 }
 
 S = freshState();
